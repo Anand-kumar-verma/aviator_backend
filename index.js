@@ -169,6 +169,7 @@ io.on("connection", (socket) => {
 
 app.get("/", (req, res) => {
   res.send(`<h1>Server is running at ${PORT}</h1>`);
+
 });
 
 httpServer.listen(PORT, () => {
