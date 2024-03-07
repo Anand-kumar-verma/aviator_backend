@@ -1,11 +1,10 @@
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const cors = require('cors');
-const todoRoutes = require('./routes/todos');
-require('dotenv').config();
-const conn = require('./config/database');
-const { startFly } = require('./controller/Aviator/internalTimeGeneration/internalTimeGeneration');
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
+const cors = require("cors");
+const todoRoutes = require("./routes/todos");
+require("dotenv").config();
+const conn = require("./config/database");
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -13,14 +12,14 @@ const io = new Server(httpServer, {
   cors: {
     origin: "*",
     credentials: true,
-    optionSuccessStatus: 200
-  }
+    optionSuccessStatus: 200,
+  },
 });
 
 const corsOptions = {
-    origin: '*',
-    credentials: true,
-    optionSuccessStatus: 200
+  origin: "*",
+  credentials: true,
+  optionSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
@@ -31,98 +30,151 @@ const PORT = process.env.PORT || 4000;
 app.use("/api/v1", todoRoutes);
 
 try {
-    conn.connect((err) => {
-        if (err) {
-            console.error("Error connecting to the database:", err);
-        } else {
-            console.log("Connected to the database");
-        }
-    });
+  conn.connect((err) => {
+    if (err) {
+      console.error("Error connecting to the database:", err);
+    } else {
+      console.log("Connected to the database");
+    }
+  });
 } catch (e) {
-    console.error('Error:', e);
+  console.error("Error:", e);
 }
 
-// socket.io aviator time generation
 function generateAndSendMessage() {
-    const time = Math.floor(Math.random() * 20) + 10;
-    io.emit("message", time);
+  const time = Math.floor(Math.random() * 50) + 10;
+  io.emit("message", time);
 
-    let fly_time = 0;
-    let seconds = 0;
+  let fly_time = 0;
+  let milliseconds = 0;
+  let seconds = 0;
 
-    io.emit("setloder", false);
-    io.emit("isFlying", true);
+  io.emit("setloder", false);
+  io.emit("isFlying", true);
 
-    const timerInterval = setInterval(() => {
-        let milliseconds = String(fly_time % 1000).padStart(3, "0").substring(0, 2);
-        io.emit("seconds", `${milliseconds}_${seconds}`);
-        const newTime = fly_time + 1;
+  const timerInterval = setInterval(() => {
+    if (milliseconds === 100) {
+      seconds += 1;
+      milliseconds = 0;
+    }
 
-        if (newTime >= time * 1000) {
-            clearInterval(timerInterval);
-            fly_time = 0;
-            milliseconds = 0;
-            seconds = 0;
-            io.emit("seconds", `${milliseconds}_${seconds}`);
-        } else if (milliseconds >= 100) {
-            seconds += 1;
-            milliseconds = 0;
-        }
+    io.emit("seconds", `${String(milliseconds).padStart(2, "0")}_${seconds}`);
+    const newTime = fly_time + 1;
 
-        fly_time = newTime;
-    }, 10);
+    if (newTime >= time * 1000) {
+      clearInterval(timerInterval);
+      fly_time = 0;
+      milliseconds = 0;
+      seconds = 0;
+    }
 
-    setTimeout(() => {
-        io.emit("isFlying", false);
-    }, time * 1000);
+    milliseconds += 1;
+    fly_time = newTime;
+  }, 100);
 
-    setTimeout(() => {
-        clearInterval(timerInterval);
-        io.emit("setcolorofdigit", true);
-    }, (5 + ((time - 5) / 5 - 0.3) * 5) * 1000);
+  setTimeout(() => {
+    io.emit("isFlying", false);
+    clearInterval(timerInterval);
+  }, time * 1000);
 
-    setTimeout(() => {
-        io.emit("setcolorofdigit", false);
-        io.emit("setloder", true);
-    }, (time * 1000) + 3000);
+  setTimeout(() => {
+    clearInterval(timerInterval);
+    io.emit("setcolorofdigit", true);
+  }, (5 + ((time - 5) / 5 - 0.3) * 5) * 1000);
 
-    setTimeout(generateAndSendMessage, (time * 1000) + 8000);
+  setTimeout(() => {
+    io.emit("setcolorofdigit", false);
+    io.emit("setloder", true);
+  }, time * 1000 + 3000);
+
+  setTimeout(generateAndSendMessage, time * 1000 + 8000);
 }
 
 // color prediction game time generated every 1 min
 function generatedTimeEveryAfterEveryOneMin() {
-    io.emit("onemin", 1);
-    setTimeout(generatedTimeEveryAfterEveryOneMin, 1 * 60 * 1000);
+  let seconds = 59;
+  const interval = setInterval(() => {
+    io.emit("onemin", seconds);
+    // console.log("time",seconds);
+    seconds--;
+    if (seconds < 0) {
+      seconds = 59;
+      clearInterval(interval)
+      generatedTimeEveryAfterEveryOneMin();
+      
+    }
+  }, 1000);
 }
 
 // color prediction game time generated every 3 min
-function generatedTimeEveryAfterEveryThreeMin() {
-    io.emit("threemin", 3);
-    setTimeout(generatedTimeEveryAfterEveryThreeMin, 3 * 60 * 1000);
-}
+const generatedTimeEveryAfterEveryThreeMin = () => {
+  let min = 2;
+  let sec = 59;
 
-// color prediction game time generated every 5 min
-function generatedTimeEveryAfterEveryFiveMin() {
-    io.emit("fivemin", 5);
-    setTimeout(generatedTimeEveryAfterEveryFiveMin, 5 * 60 * 1000);
-}
+  const interval = setInterval(() => {
+    io.emit("threemin", `${min}_${sec}`);
+    console.log("Threemin",min,sec)
+    sec--;
+
+    if (sec < 0) {
+      sec = 59;
+      min--;
+
+      if (min < 0) {
+        sec = 59;
+        min = 2;
+        clearInterval(interval);
+        generatedTimeEveryAfterEveryThreeMin();
+      }
+    }
+  }, 1000);
+};
+
+
+
+const generatedTimeEveryAfterEveryFiveMin = () => {
+    let min = 4;
+    let sec = 59;
+  
+    const interval = setInterval(() => {
+      io.emit("fivemin", `${min}_${sec}`);
+
+      sec--;
+  
+      if (sec < 0) {
+        sec = 59;
+        min--;
+  
+        if (min < 0) {
+          sec = 59;
+          min = 4;
+          clearInterval(interval);
+          generatedTimeEveryAfterEveryFiveMin();
+        }
+      }
+    }, 1000);
+  };
 
 let x = true;
-io.on('connection', (socket) => {
-    if (x) {
-        console.log("Functions called");
-        generateAndSendMessage(); // aviator game every random time 
-        generatedTimeEveryAfterEveryOneMin(); // color prediction game every 1 time generating time
-        generatedTimeEveryAfterEveryThreeMin(); // color prediction game every 3 time generating time
-        generatedTimeEveryAfterEveryFiveMin(); // color prediction game every 5 time generating time
-        x = false;
-    }
+io.on("connection", (socket) => {
+  if (x) {
+    console.log("Functions called");
+    generateAndSendMessage(); // aviator game every random time
+    generatedTimeEveryAfterEveryOneMin(); // color prediction game every 1 time generating time
+    generatedTimeEveryAfterEveryThreeMin(); // color prediction game every 3 time generating time
+    generatedTimeEveryAfterEveryFiveMin(); // color prediction game every 5 time generating time
+    x = false;
+  }
 });
 
 app.get("/", (req, res) => {
-    res.send(`<h1>Run at ${PORT}</h1>`);
+  res.send(`<h1>Server is running at ${PORT}</h1>`);
+
 });
 
 httpServer.listen(PORT, () => {
-    console.log("Server listening on port", PORT);
+  console.log("Server listening on port", PORT);
 });
+
+
+
