@@ -5,7 +5,6 @@ const cors = require("cors");
 const todoRoutes = require("./routes/todos");
 require("dotenv").config();
 const conn = require("./config/database");
-const _ = require("lodash"); // Import lodash
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -42,13 +41,6 @@ try {
   console.error("Error:", e);
 }
 
-const throttledGenerateAndSendMessage = _.throttle(() => {
-  console.log("Hii annadd");
-}, 1000); //
-const debounce = _.debounce(() => {
-  console.log("Anand");
-}, 1000); // 5000 milliseconds debounce interval
-
 function generateAndSendMessage() {
   const time = Math.floor(Math.random() * 50) + 10;
   io.emit("message", time);
@@ -82,6 +74,7 @@ function generateAndSendMessage() {
 
   setTimeout(() => {
     io.emit("isFlying", false);
+    clearInterval(timerInterval);
   }, time * 1000);
 
   setTimeout(() => {
@@ -102,10 +95,13 @@ function generatedTimeEveryAfterEveryOneMin() {
   let seconds = 59;
   const interval = setInterval(() => {
     io.emit("onemin", seconds);
+    // console.log("time",seconds);
     seconds--;
     if (seconds < 0) {
       seconds = 59;
+      clearInterval(interval)
       generatedTimeEveryAfterEveryOneMin();
+      
     }
   }, 1000);
 }
@@ -117,7 +113,7 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
 
   const interval = setInterval(() => {
     io.emit("threemin", `${min}_${sec}`);
-
+    console.log("Threemin",min,sec)
     sec--;
 
     if (sec < 0) {
@@ -127,6 +123,7 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
       if (min < 0) {
         sec = 59;
         min = 2;
+        clearInterval(interval);
         generatedTimeEveryAfterEveryThreeMin();
       }
     }
@@ -151,6 +148,7 @@ const generatedTimeEveryAfterEveryFiveMin = () => {
         if (min < 0) {
           sec = 59;
           min = 4;
+          clearInterval(interval);
           generatedTimeEveryAfterEveryFiveMin();
         }
       }
@@ -161,8 +159,6 @@ let x = true;
 io.on("connection", (socket) => {
   if (x) {
     console.log("Functions called");
-    throttledGenerateAndSendMessage();
-    debounce();
     generateAndSendMessage(); // aviator game every random time
     generatedTimeEveryAfterEveryOneMin(); // color prediction game every 1 time generating time
     generatedTimeEveryAfterEveryThreeMin(); // color prediction game every 3 time generating time
@@ -172,9 +168,12 @@ io.on("connection", (socket) => {
 });
 
 app.get("/", (req, res) => {
-  res.send(`<h1>This is running at ${PORT}</h1>`);
+  res.send(`<h1>Server is running at ${PORT}</h1>`);
 });
 
 httpServer.listen(PORT, () => {
   console.log("Server listening on port", PORT);
 });
+
+
+
