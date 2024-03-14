@@ -41,11 +41,14 @@ try {
   console.error("Error:", e);
 }
 
-const array = [1,20,2,30,1,60,10,1,3,18,1,17,12,40,10,1,2,3,1,2,12,13,10,1,2,1,20,50,2,1]
+const array = [
+  1, 20, 2, 30, 1, 60, 10, 1, 3, 18, 1, 17, 12, 40, 10, 1, 2, 3, 1, 2, 12, 13,
+  10, 1, 2, 1, 20, 50, 2, 1,
+];
 
 function generateAndSendMessage() {
-  const value = Math.floor(Math.random() * array.length-1) + 1;
-  const time  = array[value] || 12;
+  const value = Math.floor(Math.random() * array.length - 1) + 1;
+  const time = array[value] || 12;
   io.emit("message", time);
 
   let fly_time = 0;
@@ -102,9 +105,8 @@ function generatedTimeEveryAfterEveryOneMin() {
     seconds--;
     if (seconds < 0) {
       seconds = 59;
-      clearInterval(interval)
+      clearInterval(interval);
       generatedTimeEveryAfterEveryOneMin();
-      
     }
   }, 1000);
 }
@@ -116,7 +118,6 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
 
   const interval = setInterval(() => {
     io.emit("threemin", `${min}_${sec}`);
-    console.log("Threemin",min,sec)
     sec--;
 
     if (sec < 0) {
@@ -133,39 +134,56 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
   }, 1000);
 };
 
-
-
 const generatedTimeEveryAfterEveryFiveMin = () => {
-    let min = 4;
-    let sec = 59;
-  
-    const interval = setInterval(() => {
-      io.emit("fivemin", `${min}_${sec}`);
+  let min = 4;
+  let sec = 59;
 
-      sec--;
-  
-      if (sec < 0) {
+  const interval = setInterval(() => {
+    io.emit("fivemin", `${min}_${sec}`);
+
+    sec--;
+
+    if (sec < 0) {
+      sec = 59;
+      min--;
+
+      if (min < 0) {
         sec = 59;
-        min--;
-  
-        if (min < 0) {
-          sec = 59;
-          min = 4;
-          clearInterval(interval);
-          generatedTimeEveryAfterEveryFiveMin();
-        }
+        min = 4;
+        clearInterval(interval);
+        generatedTimeEveryAfterEveryFiveMin();
       }
-    }, 1000);
-  };
+    }
+  }, 1000);
+};
+
+let lastEmittedNumber = "1_2_3_4_5";
+
+const changeImagesPer6Hours = () => {
+  setInterval(() => {
+    const newNumber = `${(Number(lastEmittedNumber?.split("_")[0]) + 1) % 10}_${
+      (Number(lastEmittedNumber?.split("_")[1]) + 1) % 10
+    }_${(Number(lastEmittedNumber?.split("_")[2]) + 1) % 10}_${
+      (Number(lastEmittedNumber?.split("_")[3]) + 1) % 10
+    }_${(Number(lastEmittedNumber?.split("_")[4]) + 1) % 10}`;
+    io.emit("changeimage", newNumber);
+    lastEmittedNumber = newNumber;
+  }, 1*60*60 * 1000); // every 6 hours
+};
 
 let x = true;
 io.on("connection", (socket) => {
+  if (lastEmittedNumber) {
+    socket.emit("changeimage", lastEmittedNumber);
+    console.log("new user connecton");
+  }
   if (x) {
     console.log("Functions called");
     generateAndSendMessage(); // aviator game every random time
     generatedTimeEveryAfterEveryOneMin(); // color prediction game every 1 time generating time
     generatedTimeEveryAfterEveryThreeMin(); // color prediction game every 3 time generating time
     generatedTimeEveryAfterEveryFiveMin(); // color prediction game every 5 time generating time
+    changeImagesPer6Hours();
     x = false;
   }
 });
@@ -177,6 +195,3 @@ app.get("/", (req, res) => {
 httpServer.listen(PORT, () => {
   console.log("Server listening on port", PORT);
 });
-
-
-
