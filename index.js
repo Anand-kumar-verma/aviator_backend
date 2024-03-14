@@ -41,8 +41,11 @@ try {
   console.error("Error:", e);
 }
 
+const array = [1,20,2,30,1,60,10,1,3,18,1,17,12,40,10,1,2,3,1,2,12,13,10,1,2,1,20,50,2,1]
+
 function generateAndSendMessage() {
-  const time = Math.floor(Math.random() * 50) + 10;
+  const value = Math.floor(Math.random() * array.length-1) + 1;
+  const time  = array[value] || 12;
   io.emit("message", time);
 
   let fly_time = 0;
@@ -168,7 +171,7 @@ io.on("connection", (socket) => {
 });
 
 app.get("/", (req, res) => {
-  res.send(`<h1>Server is running at ${PORT}</h1>`);
+  res.send(`<h1>Socket Run at ${PORT}</h1>`);
 });
 
 httpServer.listen(PORT, () => {
