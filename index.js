@@ -171,6 +171,13 @@ const job = schedule.scheduleJob('0 0 * * *', async function() {
         console.log(e)
       }
     },1000)
+    response &&  setTimeout(async ()=>{
+      try{
+        await axios.get("https://admin.gameszone.life/api/direct-income");
+      }catch(e){
+        console.log(e)
+      }
+    },3000)
   } catch (error) {
     console.error("Error:", error.message);
   }
