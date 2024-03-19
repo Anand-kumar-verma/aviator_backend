@@ -199,7 +199,7 @@ io.on("connection", (socket) => {
 });
 
 app.get("/", (req, res) => {
-  res.send(`<h1>Socket Run at ${PORT}</h1>`);
+  res.send(`<h1>server running at port==> ${PORT}</h1>`);
 });
 
 httpServer.listen(PORT, () => {

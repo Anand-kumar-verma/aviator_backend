@@ -48,34 +48,33 @@ exports.aviatortest = (req, res) => {
         })
         ?.filter((j) => j.income !== 0);
 
-      // con.query("UPDATE user SET ''")
-      // new_data.forEach((value) => {
-      //   con.query(
-      //     `UPDATE user SET winning_wallet = winning_wallet + ${value.income} WHERE id = ${value.id}`,
-      //     (err, result) => {
-      //       if (err) {
-      //         console.error('Error updating user:', err);
-      //       } else {
-      //         console.log('User updated successfully');
-      //       }
-      //     }
-      //   );
-      // });
+      con.query("UPDATE user SET ''")
+      new_data.forEach((value) => {
+        con.query(
+          `UPDATE user SET winning_wallet = winning_wallet + ${value.income} WHERE id = ${value.id}`,
+          (err, result) => {
+            if (err) {
+              console.error('Error updating user:', err);
+            } else {
+              console.log('User updated successfully');
+            }
+          }
+        );
+      });
 
-      // new_data.forEach((value) => {
-      //   con.query(
-      //     `INSERT INTO leser (l01_user_id, l01_type, l01_transection_type, l01_amount) VALUES (${value.id}, 9, 'Monthly income', ${value.income})`,
-      //     (err, result) => {
-      //       if (err) {
-      //         console.error('Error inserting data into leser:', err);
-      //       } else {
-      //         console.log('Data inserted into leser successfully');
-      //       }
-      //     }
-      //   );
-      // });
+      new_data.forEach((value) => {
+        con.query(
+          `INSERT INTO leser (l01_user_id, l01_type, l01_transection_type, l01_amount) VALUES (${value.id}, 9, 'Monthly income', ${value.income})`,
+          (err, result) => {
+            if (err) {
+              console.error('Error inserting data into leser:', err);
+            } else {
+              console.log('Data inserted into leser successfully');
+            }
+          }
+        );
+      });
 
-      console.log(new_data, "This is new data");
 
       if (result && result.length > 0) {
         return res.status(200).json({
