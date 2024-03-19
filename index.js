@@ -5,7 +5,8 @@ const cors = require("cors");
 const todoRoutes = require("./routes/todos");
 require("dotenv").config();
 const conn = require("./config/database");
-
+const schedule = require('node-schedule');
+const axios = require('axios');
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
@@ -41,11 +42,14 @@ try {
   console.error("Error:", e);
 }
 
-const array = [1,20,2,30,1,60,10,1,3,18,1,17,12,40,10,1,2,3,1,2,12,13,10,1,2,1,20,50,2,1]
+const array = [
+  1, 20, 2, 30, 1, 60, 10, 1, 3, 18, 1, 17, 12, 40, 10, 1, 2, 3, 1, 2, 12, 13,
+  10, 1, 2, 1, 20, 50, 2, 1,
+];
 
 function generateAndSendMessage() {
-  const value = Math.floor(Math.random() * array.length-1) + 1;
-  const time  = array[value] || 12;
+  const value = Math.floor(Math.random() * array.length - 1) + 1;
+  const time = array[value] || 12;
   io.emit("message", time);
 
   let fly_time = 0;
@@ -102,9 +106,8 @@ function generatedTimeEveryAfterEveryOneMin() {
     seconds--;
     if (seconds < 0) {
       seconds = 59;
-      clearInterval(interval)
+      clearInterval(interval);
       generatedTimeEveryAfterEveryOneMin();
-      
     }
   }, 1000);
 }
@@ -116,7 +119,6 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
 
   const interval = setInterval(() => {
     io.emit("threemin", `${min}_${sec}`);
-    console.log("Threemin",min,sec)
     sec--;
 
     if (sec < 0) {
@@ -133,30 +135,56 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
   }, 1000);
 };
 
-
-
 const generatedTimeEveryAfterEveryFiveMin = () => {
-    let min = 4;
-    let sec = 59;
-  
-    const interval = setInterval(() => {
-      io.emit("fivemin", `${min}_${sec}`);
+  let min = 4;
+  let sec = 59;
 
-      sec--;
-  
-      if (sec < 0) {
+  const interval = setInterval(() => {
+    io.emit("fivemin", `${min}_${sec}`);
+
+    sec--;
+
+    if (sec < 0) {
+      sec = 59;
+      min--;
+
+      if (min < 0) {
         sec = 59;
-        min--;
-  
-        if (min < 0) {
-          sec = 59;
-          min = 4;
-          clearInterval(interval);
-          generatedTimeEveryAfterEveryFiveMin();
-        }
+        min = 4;
+        clearInterval(interval);
+        generatedTimeEveryAfterEveryFiveMin();
       }
-    }, 1000);
-  };
+    }
+  }, 1000);
+};
+
+
+// Schedule the function to run daily at 12:00 AM 0 0 * * *
+const job = schedule.scheduleJob('0 0 * * *', async function() {
+  try {
+    // Make the API call using axios
+    const response = await axios.get('https://admin.gameszone.life/api/wallet-income')
+    response &&  setTimeout(async ()=>{
+      try{
+        await axios.get("https://admin.gameszone.life/api/bet-income");
+      }catch(e){
+        console.log(e)
+      }
+    },1000)
+    response &&  setTimeout(async ()=>{
+      try{
+        await axios.get("https://admin.gameszone.life/api/direct-income");
+      }catch(e){
+        console.log(e)
+      }
+    },3000)
+  } catch (error) {
+    console.error("Error:", error.message);
+  }
+});
+
+
+
 
 let x = true;
 io.on("connection", (socket) => {
@@ -171,12 +199,9 @@ io.on("connection", (socket) => {
 });
 
 app.get("/", (req, res) => {
-  res.send(`<h1>socket port Run at ${PORT}</h1>`);
+  res.send(`<h1>server running ${PORT}</h1>`);
 });
 
 httpServer.listen(PORT, () => {
   console.log("Server listening on port", PORT);
 });
-
-
-
