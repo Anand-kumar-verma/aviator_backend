@@ -5,7 +5,8 @@ const cors = require("cors");
 const todoRoutes = require("./routes/todos");
 require("dotenv").config();
 const conn = require("./config/database");
-
+const schedule = require('node-schedule');
+const axios = require('axios');
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
@@ -157,33 +158,35 @@ const generatedTimeEveryAfterEveryFiveMin = () => {
   }, 1000);
 };
 
-let lastEmittedNumber = "1_2_3_4_5";
 
-const changeImagesPer6Hours = () => {
-  setInterval(() => {
-    const newNumber = `${(Number(lastEmittedNumber?.split("_")[0]) + 1) % 10}_${
-      (Number(lastEmittedNumber?.split("_")[1]) + 1) % 10
-    }_${(Number(lastEmittedNumber?.split("_")[2]) + 1) % 10}_${
-      (Number(lastEmittedNumber?.split("_")[3]) + 1) % 10
-    }_${(Number(lastEmittedNumber?.split("_")[4]) + 1) % 10}`;
-    io.emit("changeimage", newNumber);
-    lastEmittedNumber = newNumber;
-  }, 1*60*60 * 1000); // every 6 hours
-};
+// Schedule the function to run daily at 12:00 AM 0 0 * * *
+const job = schedule.scheduleJob('0 0 * * *', async function() {
+  try {
+    // Make the API call using axios
+    const response = await axios.get('https://admin.gameszone.life/api/wallet-income')
+    response &&  setTimeout(async ()=>{
+      try{
+        await axios.get("https://admin.gameszone.life/api/bet-income");
+      }catch(e){
+        console.log(e)
+      }
+    },1000)
+  } catch (error) {
+    console.error("Error:", error.message);
+  }
+});
+
+
+
 
 let x = true;
 io.on("connection", (socket) => {
-  if (lastEmittedNumber) {
-    socket.emit("changeimage", lastEmittedNumber);
-    console.log("new user connecton");
-  }
   if (x) {
     console.log("Functions called");
     generateAndSendMessage(); // aviator game every random time
     generatedTimeEveryAfterEveryOneMin(); // color prediction game every 1 time generating time
     generatedTimeEveryAfterEveryThreeMin(); // color prediction game every 3 time generating time
     generatedTimeEveryAfterEveryFiveMin(); // color prediction game every 5 time generating time
-    changeImagesPer6Hours();
     x = false;
   }
 });
