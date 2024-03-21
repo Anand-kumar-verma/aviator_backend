@@ -43,13 +43,13 @@ try {
 }
 
 const array = [
-  1, 20, 2, 30, 1, 60, 10, 1, 3, 18, 1, 17, 12, 40, 10, 1, 2, 3, 1, 2, 12, 13,
-  10, 1, 2, 1, 20, 50, 2, 1,
+  2, 20, 2, 30, 2, 60, 10, 2, 3, 18, 2, 17, 12, 40, 10, 2, 5, 3, 2, 2, 12, 13,
+  10, 2, 2,2, 20, 50, 2,2,
 ];
 
 function generateAndSendMessage() {
   const value = Math.floor(Math.random() * array.length - 1) + 1;
-  const time = array[value] || 12;
+  const time =  array[value] || 12;
   io.emit("message", time);
 
   let fly_time = 0;
