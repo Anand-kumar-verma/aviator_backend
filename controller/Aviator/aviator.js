@@ -1,6 +1,6 @@
 const con = require("../../config/database");
 
-exports.aviatortest = (req, res) => {
+exports.promotionCount = (req, res) => {
   let array = [];
   try {
     con.query("SELECT * FROM user", (err, result) => {
@@ -17,64 +17,14 @@ exports.aviatortest = (req, res) => {
       // console.log(array, "This is final result");
 
       array = array?.map((i) => {
-        return { ...i, count: 0 };
+        return { ...i, count: 0,teamcount:0 };
       });
 
-      console.log(
-        new Date("2024-01-27T06:13:41.000Z").getFullYear(),
-        new Date("2024-01-27T06:13:41.000Z").getMonth(),
-        new Date().getMonth()
-      );
+      // let new_data = updateReferralCount(array)
+    let new_data = updateReferralCountnew(array)
 
-      const new_data = updateReferralCount(array)
-        ?.map((i) => {
-          return {
-            ...i,
-            income:
-              i.count === 10000
-                ? 250000
-                : i.count === 1500
-                ? 100000
-                : i.count === 1000
-                ? 25000
-                : i.count === 500
-                ? 7500
-                : i.count === 150
-                ? 2000
-                : i.count === 1
-                ? 500
-                : 0,
-          };
-        })
-        ?.filter((j) => j.income !== 0);
-
-      con.query("UPDATE user SET ''")
-      new_data.forEach((value) => {
-        con.query(
-          `UPDATE user SET winning_wallet = winning_wallet + ${value.income} WHERE id = ${value.id}`,
-          (err, result) => {
-            if (err) {
-              console.error('Error updating user:', err);
-            } else {
-              console.log('User updated successfully');
-            }
-          }
-        );
-      });
-
-      new_data.forEach((value) => {
-        con.query(
-          `INSERT INTO leser (l01_user_id, l01_type, l01_transection_type, l01_amount) VALUES (${value.id}, 9, 'Monthly income', ${value.income})`,
-          (err, result) => {
-            if (err) {
-              console.error('Error inserting data into leser:', err);
-            } else {
-              console.log('Data inserted into leser successfully');
-            }
-          }
-        );
-      });
-
+      console.log(new_data[0],"This is my new data");
+      
 
       if (result && result.length > 0) {
         return res.status(200).json({
@@ -96,61 +46,84 @@ exports.aviatortest = (req, res) => {
   }
 };
 
-function updateReferralCount(users) {
+
+
+function updateReferralCountnew(users) {
   const countMap = {};
+  const teamCountMap = {};
+  const depositMemberMap = {}; // Map to store the count of direct referrals with first_recharge = 1
+  const depositMemberTeamMap = {}; // Map to store the count of direct and indirect referrals with first_recharge = 1
+  const depositRechargeMap = {}; // Map to store the total sum of recharge amounts for direct referrals
+  const depositRechargeTeamMap = {}; // Map to store the total sum of recharge amounts for direct and indirect referrals
 
-  function updateCount(userId) {
-    if (
-      creationDate.getFullYear() === currentDate.getFullYear() &&
-      creationDate.getMonth() === currentDate.getMonth() - 1 &&
-      user.first_recharge === 1
-    ) {
-      if (countMap[userId]) {
-        countMap[userId]++;
-      } else {
-        countMap[userId] = 1;
-      }
-    }
+  // Initialize count for each user
+  users.forEach(user => {
+    countMap[user.id] = 0;
+    teamCountMap[user.id] = 0;
+    depositMemberMap[user.id] = 0;
+    depositMemberTeamMap[user.id] = 0;
+    depositRechargeMap[user.id] = 0;
+    depositRechargeTeamMap[user.id] = 0;
+  });
 
-    const user = users.find((u) => u.id === userId);
-
+  // Update count for each referral used
+  users.forEach(user => {
     if (user.referral_user_id !== null) {
-      const currentDate = new Date();
-      // Get the creation date of the user
-      const creationDate = new Date(user.created_at);
-      if (
-        creationDate.getFullYear() === currentDate.getFullYear() &&
-        creationDate.getMonth() === currentDate.getMonth() - 1 &&
-        user.first_recharge === 1
-      )
-        updateCount(user.referral_user_id);
-    }
-  }
-
-  users.forEach((user) => {
-    // Get the current date
-    const currentDate = new Date();
-    // Get the creation date of the user
-    const creationDate = new Date(user.created_at);
-    if (
-      creationDate.getFullYear() === currentDate.getFullYear() &&
-      creationDate.getMonth() === currentDate.getMonth() - 1 &&
-      user.first_recharge === 1
-    ) {
-      // Update the referral count only if the condition is met
-      if (user.referral_user_id !== null) {
-        updateCount(user.referral_user_id);
-      }
+      countMap[user.referral_user_id]++;
     }
   });
 
-  users.forEach((user) => {
-    if (countMap[user.id]) {
-      user.count = countMap[user.id];
-    } else {
-      user.count = 0;
+  // Update team count, deposit_member, and deposit_member_team count for each user recursively
+  const updateTeamCountRecursively = (user) => {
+    let totalChildrenCount = countMap[user.id];
+    users.forEach(u => {
+      if (u.referral_user_id === user.id) {
+        totalChildrenCount += updateTeamCountRecursively(u);
+      }
+    });
+    return totalChildrenCount;
+  };
+
+  // Update deposit_recharge and deposit_recharge_team for each user recursively
+  const updateRechargeRecursively = (user) => {
+    let totalRecharge = user.recharge;
+    users.forEach(u => {
+      if (u.referral_user_id === user.id) {
+        totalRecharge += updateRechargeRecursively(u);
+      }
+    });
+    return totalRecharge;
+  };
+
+  users.forEach(user => {
+    teamCountMap[user.id] = updateTeamCountRecursively(user);
+    // Update deposit_member count for direct referrals
+    if (user.referral_user_id !== null && user.first_recharge === 1) {
+      depositMemberMap[user.referral_user_id]++;
     }
+    // Update deposit_member_team count for direct and indirect referrals
+    if (user.first_recharge === 1) {
+      depositMemberTeamMap[user.id] = teamCountMap[user.id];
+    }
+    // Update deposit_recharge for direct referrals
+    if (user.referral_user_id !== null) {
+      depositRechargeMap[user.referral_user_id] += user.recharge;
+    }
+    // Update deposit_recharge_team recursively
+    depositRechargeTeamMap[user.id] = user.recharge + updateRechargeRecursively(user);
+  });
+
+  // Assign counts to each user
+  users.forEach(user => {
+    user.count = countMap[user.id];
+    user.teamcount = teamCountMap[user.id] || 0; // Set default value to 0 if undefined
+    user.deposit_member = depositMemberMap[user.id] || 0; // Set default value to 0 if undefined
+    user.deposit_member_team = depositMemberTeamMap[user.id] || 0; // Set default value to 0 if undefined
+    user.deposit_recharge = depositRechargeMap[user.id] || 0; // Set default value to 0 if undefined
+    user.deposit_recharge_team = depositRechargeTeamMap[user.id] || 0; // Set default value to 0 if undefined
   });
 
   return users;
 }
+
+
