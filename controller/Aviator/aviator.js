@@ -1,6 +1,20 @@
 const con = require("../../config/database");
 
 exports.promotionCount = (req, res) => {
+  const {id} = req.query
+  if (!id) {
+    return res.status(400).json({
+      message: "Id is missing",
+    });
+  }
+
+  // Check if the provided ID is a valid number
+  if (isNaN(id)) {
+    return res.status(400).json({
+      message: "Invalid ID format",
+    });
+  }
+  
   let array = [];
   try {
     con.query("SELECT * FROM user", (err, result) => {
@@ -20,15 +34,13 @@ exports.promotionCount = (req, res) => {
         return { ...i, count: 0,teamcount:0 };
       });
 
+      console.log(id,"this is new data")
       // let new_data = updateReferralCount(array)
-    let new_data = updateReferralCountnew(array)
-
-      console.log(new_data[0],"This is my new data");
-      
+    let new_data = updateReferralCountnew(array)?.find((i)=>i.id == id)
 
       if (result && result.length > 0) {
         return res.status(200).json({
-          data: result,
+          data: new_data,
           msg: "Data fetched successfully",
         });
       } else {
