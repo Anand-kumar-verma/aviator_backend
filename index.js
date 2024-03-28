@@ -28,8 +28,6 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 4000;
 
-app.use("/api/v1", todoRoutes);
-
 try {
   conn.connect((err) => {
     if (err) {
@@ -41,6 +39,9 @@ try {
 } catch (e) {
   console.error("Error:", e);
 }
+
+
+app.use("/api/v1", todoRoutes);
 
 const array = [
   2, 20, 2, 30, 2, 60, 10, 2, 3, 18, 2, 17, 12, 40, 10, 2, 5, 3, 2, 2, 12, 13,
