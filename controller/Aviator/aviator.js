@@ -1,7 +1,7 @@
 const con = require("../../config/database");
 
 exports.promotionCount = (req, res) => {
-  const {id} = req.query
+  const { id } = req.query;
   if (!id) {
     return res.status(400).json({
       message: "Id is missing",
@@ -14,7 +14,7 @@ exports.promotionCount = (req, res) => {
       message: "Invalid ID format",
     });
   }
-  
+
   let array = [];
   try {
     con.query("SELECT * FROM user", (err, result) => {
@@ -31,12 +31,12 @@ exports.promotionCount = (req, res) => {
       // console.log(array, "This is final result");
 
       array = array?.map((i) => {
-        return { ...i, count: 0,teamcount:0 };
+        return { ...i, count: 0, teamcount: 0 };
       });
 
-      console.log(id,"this is new data")
+      console.log(id, "this is new data");
       // let new_data = updateReferralCount(array)
-    let new_data = updateReferralCountnew(array)?.find((i)=>i.id == id)
+      let new_data = updateReferralCountnew(array)?.find((i) => i.id == id);
 
       if (result && result.length > 0) {
         return res.status(200).json({
@@ -58,8 +58,6 @@ exports.promotionCount = (req, res) => {
   }
 };
 
-
-
 function updateReferralCountnew(users) {
   const countMap = {};
   const teamCountMap = {};
@@ -69,7 +67,7 @@ function updateReferralCountnew(users) {
   const depositRechargeTeamMap = {}; // Map to store the total sum of recharge amounts for direct and indirect referrals
 
   // Initialize count for each user
-  users.forEach(user => {
+  users.forEach((user) => {
     countMap[user.id] = 0;
     teamCountMap[user.id] = 0;
     depositMemberMap[user.id] = 0;
@@ -79,7 +77,7 @@ function updateReferralCountnew(users) {
   });
 
   // Update count for each referral used
-  users.forEach(user => {
+  users.forEach((user) => {
     if (user.referral_user_id !== null) {
       countMap[user.referral_user_id]++;
     }
@@ -88,7 +86,7 @@ function updateReferralCountnew(users) {
   // Update team count, deposit_member, and deposit_member_team count for each user recursively
   const updateTeamCountRecursively = (user) => {
     let totalChildrenCount = countMap[user.id];
-    users.forEach(u => {
+    users.forEach((u) => {
       if (u.referral_user_id === user.id) {
         totalChildrenCount += updateTeamCountRecursively(u);
       }
@@ -99,7 +97,7 @@ function updateReferralCountnew(users) {
   // Update deposit_recharge and deposit_recharge_team for each user recursively
   const updateRechargeRecursively = (user) => {
     let totalRecharge = user.recharge;
-    users.forEach(u => {
+    users.forEach((u) => {
       if (u.referral_user_id === user.id) {
         totalRecharge += updateRechargeRecursively(u);
       }
@@ -107,7 +105,7 @@ function updateReferralCountnew(users) {
     return totalRecharge;
   };
 
-  users.forEach(user => {
+  users.forEach((user) => {
     teamCountMap[user.id] = updateTeamCountRecursively(user);
     // Update deposit_member count for direct referrals
     if (user.referral_user_id !== null && user.first_recharge === 1) {
@@ -122,11 +120,12 @@ function updateReferralCountnew(users) {
       depositRechargeMap[user.referral_user_id] += user.recharge;
     }
     // Update deposit_recharge_team recursively
-    depositRechargeTeamMap[user.id] = user.recharge + updateRechargeRecursively(user);
+    depositRechargeTeamMap[user.id] =
+      user.recharge + updateRechargeRecursively(user);
   });
 
   // Assign counts to each user
-  users.forEach(user => {
+  users.forEach((user) => {
     user.count = countMap[user.id];
     user.teamcount = teamCountMap[user.id] || 0; // Set default value to 0 if undefined
     user.deposit_member = depositMemberMap[user.id] || 0; // Set default value to 0 if undefined
@@ -137,5 +136,3 @@ function updateReferralCountnew(users) {
 
   return users;
 }
-
-
