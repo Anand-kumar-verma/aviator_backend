@@ -103,8 +103,7 @@ function generatedTimeEveryAfterEveryOneMin() {
   const job = schedule.scheduleJob(rule, function() {
     const currentTime = new Date(); // Get the current time
     // const formattedTime = moment(currentTime).format("ss");
-    io.emit("onemin",59-currentTime.getSeconds()); // Emit the formatted time
-    // console.log(moment(currentTime).format("HH:mm:ss"),59-Number(formattedTime || 0));
+    io.emit("onemin",currentTime.getSeconds()>0?60-currentTime.getSeconds():currentTime.getSeconds()); // Emit the formatted time
   });
 }
 
@@ -134,7 +133,7 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
   rule.second = new schedule.Range(0, 59);
   const job = schedule.scheduleJob(rule, function() {
     const currentTime = new Date().getSeconds(); // Get the current time
-    io.emit("threemin", `${min}_${59-currentTime}`);
+    io.emit("threemin", `${min}_${currentTime.getSeconds()>0?60-currentTime.getSeconds():currentTime.getSeconds()}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
@@ -147,25 +146,36 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
 
 const generatedTimeEveryAfterEveryFiveMin = () => {
   let min = 4;
-  let sec = 59;
+  // let sec = 59;
 
-  const interval = setInterval(() => {
-    io.emit("fivemin", `${min}_${sec}`);
+  // const interval = setInterval(() => {
+  //   io.emit("fivemin", `${min}_${sec}`);
 
-    sec--;
+  //   sec--;
 
-    if (sec < 0) {
-      sec = 59;
+  //   if (sec < 0) {
+  //     sec = 59;
+  //     min--;
+
+  //     if (min < 0) {
+  //       sec = 59;
+  //       min = 4;
+  //       clearInterval(interval);
+  //       generatedTimeEveryAfterEveryFiveMin();
+  //     }
+  //   }
+  // }, 1000);
+
+  const rule = new schedule.RecurrenceRule();
+  rule.second = new schedule.Range(0, 59);
+  const job = schedule.scheduleJob(rule, function() {
+    const currentTime = new Date().getSeconds(); // Get the current time
+    io.emit("fivemin", `${min}_${currentTime.getSeconds()>0?60-currentTime.getSeconds():currentTime.getSeconds()}`);
+    if (currentTime === 0) {
       min--;
-
-      if (min < 0) {
-        sec = 59;
-        min = 4;
-        clearInterval(interval);
-        generatedTimeEveryAfterEveryFiveMin();
-      }
+      if (min < 0) min = 4; // Reset min to 2 when it reaches 0
     }
-  }, 1000);
+  });
 };
 
 
