@@ -3,7 +3,9 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const todoRoutes = require("./routes/todos");
+const moment = require("moment");
 require("dotenv").config();
+const schedule = require('node-schedule');
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
@@ -84,41 +86,64 @@ function generateAndSendMessage() {
 
 // color prediction game time generated every 1 min
 function generatedTimeEveryAfterEveryOneMin() {
-  let seconds = 59;
-  const interval = setInterval(() => {
-    io.emit("onemin", seconds);
-    // console.log("time",seconds);
-    seconds--;
-    if (seconds < 0) {
-      seconds = 59;
-      clearInterval(interval);
-      generatedTimeEveryAfterEveryOneMin();
-    }
-  }, 1000);
+  // let seconds = 59;
+  // const interval = setInterval(() => {
+  //   io.emit("onemin", seconds);
+  //   console.log(seconds)
+  //   seconds--;
+  //   if (seconds < 0) {
+  //     seconds = 59;
+  //     console.log(moment(new Date()).format("HH:mm:ss"))
+  //     clearInterval(interval);
+  //     generatedTimeEveryAfterEveryOneMin();
+  //   }
+  // }, 1000);
+  const rule = new schedule.RecurrenceRule();
+  rule.second = new schedule.Range(0, 59);
+  const job = schedule.scheduleJob(rule, function() {
+    const currentTime = new Date(); // Get the current time
+    // const formattedTime = moment(currentTime).format("ss");
+    io.emit("onesecond",59-currentTime.getSeconds()); // Emit the formatted time
+    // console.log(moment(currentTime).format("HH:mm:ss"),59-Number(formattedTime || 0));
+  });
 }
+
 
 // color prediction game time generated every 3 min
 const generatedTimeEveryAfterEveryThreeMin = () => {
   let min = 2;
   let sec = 59;
+  // const interval = setInterval(() => {
+  //   io.emit("threemin", `${min}_${sec}`);
+  //   sec--;
 
-  const interval = setInterval(() => {
-    io.emit("threemin", `${min}_${sec}`);
-    sec--;
+  //   if (sec < 0) {
+  //     sec = 59;
+  //     min--;
 
-    if (sec < 0) {
-      sec = 59;
+  //     if (min < 0) {
+  //       sec = 59;
+  //       min = 2;
+  //       clearInterval(interval);
+  //       generatedTimeEveryAfterEveryThreeMin();
+  //     }
+  //   }
+  // }, 1000);
+
+  const rule = new schedule.RecurrenceRule();
+  rule.second = new schedule.Range(0, 59);
+  const job = schedule.scheduleJob(rule, function() {
+    const currentTime = new Date().getSeconds(); // Get the current time
+    io.emit("threemin", `${min}_${59-currentTime}`);
+    if (currentTime === 0) {
       min--;
-
-      if (min < 0) {
-        sec = 59;
-        min = 2;
-        clearInterval(interval);
-        generatedTimeEveryAfterEveryThreeMin();
-      }
+      if (min < 0) min = 2; // Reset min to 2 when it reaches 0
     }
-  }, 1000);
+  });
 };
+
+
+
 
 const generatedTimeEveryAfterEveryFiveMin = () => {
   let min = 4;
@@ -146,15 +171,23 @@ const generatedTimeEveryAfterEveryFiveMin = () => {
 
 let x = true;
 io.on("connection", (socket) => {
-  if (x) {
+
+});
+
+if (x) {
+  generateAndSendMessage();
+  console.log("Waiting for the next minute to start...");
+  const now = new Date();
+  const secondsUntilNextMinute = 60 - now.getSeconds(); // Calculate remaining seconds until the next minute
+  setTimeout(() => {
     console.log("Functions called");
-    generateAndSendMessage(); // aviator game every random time
+    // aviator game every random time
     generatedTimeEveryAfterEveryOneMin(); // color prediction game every 1 time generating time
     generatedTimeEveryAfterEveryThreeMin(); // color prediction game every 3 time generating time
     generatedTimeEveryAfterEveryFiveMin(); // color prediction game every 5 time generating time
     x = false;
-  }
-});
+  }, secondsUntilNextMinute * 1000); // Wait until the next minute starts
+}
 
 app.get("/", (req, res) => {
   res.send(`<h1>server running at port=====> ${PORT}</h1>`);
