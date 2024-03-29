@@ -4,9 +4,6 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const todoRoutes = require("./routes/todos");
 require("dotenv").config();
-const conn = require("./config/database");
-const schedule = require('node-schedule');
-const axios = require('axios');
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
@@ -28,29 +25,16 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 4000;
 
-try {
-  conn.connect((err) => {
-    if (err) {
-      console.error("Error connecting to the database:", err);
-    } else {
-      console.log("Connected to the database");
-    }
-  });
-} catch (e) {
-  console.error("Error:", e);
-}
-
-
 app.use("/api/v1", todoRoutes);
 
 const array = [
   2, 20, 2, 30, 2, 60, 10, 2, 3, 18, 2, 17, 12, 40, 10, 2, 5, 3, 2, 2, 12, 13,
-  10, 2, 2,2, 20, 50, 2,2,
+  10, 2, 2, 2, 20, 50, 2, 2,
 ];
 
 function generateAndSendMessage() {
   const value = Math.floor(Math.random() * array.length - 1) + 1;
-  const time =  array[value] || 12;
+  const time = array[value] || 12;
   io.emit("message", time);
 
   let fly_time = 0;
@@ -158,33 +142,6 @@ const generatedTimeEveryAfterEveryFiveMin = () => {
     }
   }, 1000);
 };
-
-
-// Schedule the function to run daily at 12:00 AM 0 0 * * *
-const job = schedule.scheduleJob('0 0 * * *', async function() {
-  try {
-    // Make the API call using axios
-    const response = await axios.get('https://admin.gameszone.life/api/wallet-income')
-    response &&  setTimeout(async ()=>{
-      try{
-        await axios.get("https://admin.gameszone.life/api/bet-income");
-      }catch(e){
-        console.log(e)
-      }
-    },1000)
-    response &&  setTimeout(async ()=>{
-      try{
-        await axios.get("https://admin.gameszone.life/api/direct-income");
-      }catch(e){
-        console.log(e)
-      }
-    },3000)
-  } catch (error) {
-    console.error("Error:", error.message);
-  }
-});
-
-
 
 
 let x = true;
