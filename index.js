@@ -103,7 +103,7 @@ function generatedTimeEveryAfterEveryOneMin() {
   const job = schedule.scheduleJob(rule, function() {
     const currentTime = new Date(); // Get the current time
     // const formattedTime = moment(currentTime).format("ss");
-    io.emit("onesecond",59-currentTime.getSeconds()); // Emit the formatted time
+    io.emit("onemin",59-currentTime.getSeconds()); // Emit the formatted time
     // console.log(moment(currentTime).format("HH:mm:ss"),59-Number(formattedTime || 0));
   });
 }
