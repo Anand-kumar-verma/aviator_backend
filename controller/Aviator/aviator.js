@@ -1,6 +1,7 @@
 const con = require("../../config/database");
 
-exports.promotionCount = (req, res) => {
+exports.promotionCount =async(req, res) => {
+
   const { id } = req.query;
   if (!id) {
     return res.status(400).json({
