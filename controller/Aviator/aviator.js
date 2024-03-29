@@ -109,11 +109,11 @@ function updateReferralCountnew(users) {
   users.forEach((user) => {
     teamCountMap[user.id] = updateTeamCountRecursively(user);
     // Update deposit_member count for direct referrals
-    if (user.referral_user_id !== null && user.first_recharge === 1) {
+    if (user.referral_user_id !== null && user.recharge >0) {
       depositMemberMap[user.referral_user_id]++;
     }
     // Update deposit_member_team count for direct and indirect referrals
-    if (user.first_recharge === 1) {
+    if (user.recharge === 1) {
       depositMemberTeamMap[user.id] = teamCountMap[user.id];
     }
     // Update deposit_recharge for direct referrals
