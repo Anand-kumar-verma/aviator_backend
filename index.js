@@ -133,7 +133,7 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
   rule.second = new schedule.Range(0, 59);
   const job = schedule.scheduleJob(rule, function() {
     const currentTime = new Date().getSeconds(); // Get the current time
-    io.emit("threemin", `${min}_${currentTime.getSeconds()>0?60-currentTime.getSeconds():currentTime.getSeconds()}`);
+    io.emit("threemin", `${min}_${currentTime>0?60-currentTime:currentTime}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
@@ -170,7 +170,7 @@ const generatedTimeEveryAfterEveryFiveMin = () => {
   rule.second = new schedule.Range(0, 59);
   const job = schedule.scheduleJob(rule, function() {
     const currentTime = new Date().getSeconds(); // Get the current time
-    io.emit("fivemin", `${min}_${currentTime.getSeconds()>0?60-currentTime.getSeconds():currentTime.getSeconds()}`);
+    io.emit("fivemin", `${min}_${currentTime>0?60-currentTime:currentTime}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 4; // Reset min to 2 when it reaches 0
