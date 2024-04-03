@@ -5,7 +5,8 @@ const cors = require("cors");
 const todoRoutes = require("./routes/todos");
 const moment = require("moment");
 require("dotenv").config();
-const schedule = require('node-schedule');
+const schedule = require("node-schedule");
+const { default: axios } = require("axios");
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, {
@@ -86,118 +87,193 @@ function generateAndSendMessage() {
 
 // color prediction game time generated every 1 min
 function generatedTimeEveryAfterEveryOneMin() {
-  // let seconds = 59;
-  // const interval = setInterval(() => {
-  //   io.emit("onemin", seconds);
-  //   console.log(seconds)
-  //   seconds--;
-  //   if (seconds < 0) {
-  //     seconds = 59;
-  //     console.log(moment(new Date()).format("HH:mm:ss"))
-  //     clearInterval(interval);
-  //     generatedTimeEveryAfterEveryOneMin();
-  //   }
-  // }, 1000);
   const rule = new schedule.RecurrenceRule();
   rule.second = new schedule.Range(0, 59);
-  const job = schedule.scheduleJob(rule, function() {
-    const currentTime = new Date(); // Get the current time
-    // const formattedTime = moment(currentTime).format("ss");
-    io.emit("onemin",currentTime.getSeconds()>0?60-currentTime.getSeconds():currentTime.getSeconds()); // Emit the formatted time
+  const job = schedule.scheduleJob(rule, function () {
+    const currentTime = new Date();
+    const timeToSend =
+      currentTime.getSeconds() > 0
+        ? 60 - currentTime.getSeconds()
+        : currentTime.getSeconds();
+    io.emit("onemin", timeToSend); // Emit the formatted time
+    if (timeToSend === 9) {
+      try {
+        const datetoAPISend = parseInt(new Date().getTime().toString());
+        setTimeout(async () => {
+          const res = await axios.get(
+            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
+          );
+          if (res.data.data[0]) {
+            const obj = res.data.data[0];
+            const fd = new FormData();
+            fd.append("hash", `**${obj.hash.slice(-4)}`);
+            fd.append("number", obj.number);
+            fd.append("time", moment(datetoAPISend).format("HH:mm:ss"));
+            const newString = obj.hash;
+            let num = null;
+            for (let i = newString.length - 1; i >= 0; i--) {
+              if (!isNaN(parseInt(newString[i]))) {
+                num = parseInt(newString[i]);
+                break;
+              }
+            }
+            fd.append("slotid", num);
+            fd.append("overall", JSON.stringify(obj));
+            //  trx 1
+            try {
+              const response = await axios.post(
+                "https://zupeeter.com/Apitrx/insert_one_trx",
+                fd
+              );
+            } catch (e) {
+              console.log(e);
+            }
+          }
+        }, [3000]);
+      } catch (e) {
+        console.log(e);
+      }
+    }
   });
 }
-
 
 // color prediction game time generated every 3 min
 const generatedTimeEveryAfterEveryThreeMin = () => {
   let min = 2;
-  let sec = 59;
-  // const interval = setInterval(() => {
-  //   io.emit("threemin", `${min}_${sec}`);
-  //   sec--;
-
-  //   if (sec < 0) {
-  //     sec = 59;
-  //     min--;
-
-  //     if (min < 0) {
-  //       sec = 59;
-  //       min = 2;
-  //       clearInterval(interval);
-  //       generatedTimeEveryAfterEveryThreeMin();
-  //     }
-  //   }
-  // }, 1000);
-
   const rule = new schedule.RecurrenceRule();
   rule.second = new schedule.Range(0, 59);
-  const job = schedule.scheduleJob(rule, function() {
+  const job = schedule.scheduleJob(rule, function () {
     const currentTime = new Date().getSeconds(); // Get the current time
-    io.emit("threemin", `${min}_${currentTime>0?60-currentTime:currentTime}`);
+    const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
+    io.emit("threemin", `${min}_${timeToSend}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
     }
-  });
-};
-
-
-
-
-const generatedTimeEveryAfterEveryFiveMin = () => {
-  let min = 4;
-  // let sec = 59;
-
-  // const interval = setInterval(() => {
-  //   io.emit("fivemin", `${min}_${sec}`);
-
-  //   sec--;
-
-  //   if (sec < 0) {
-  //     sec = 59;
-  //     min--;
-
-  //     if (min < 0) {
-  //       sec = 59;
-  //       min = 4;
-  //       clearInterval(interval);
-  //       generatedTimeEveryAfterEveryFiveMin();
-  //     }
-  //   }
-  // }, 1000);
-
-  const rule = new schedule.RecurrenceRule();
-  rule.second = new schedule.Range(0, 59);
-  const job = schedule.scheduleJob(rule, function() {
-    const currentTime = new Date().getSeconds(); // Get the current time
-    io.emit("fivemin", `${min}_${currentTime>0?60-currentTime:currentTime}`);
-    if (currentTime === 0) {
-      min--;
-      if (min < 0) min = 4; // Reset min to 2 when it reaches 0
+    if (timeToSend === 9 && min === 0) {
+      try {
+        const datetoAPISend = parseInt(new Date().getTime().toString());
+        setTimeout(async () => {
+          const res = await axios.get(
+            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
+          );
+          if (res.data.data[0]) {
+            const obj = res.data.data[0];
+            const fd = new FormData();
+            fd.append("hash", `**${obj.hash.slice(-4)}`);
+            fd.append("number", obj.number);
+            fd.append("time", moment(datetoAPISend).format("HH:mm:ss"));
+            const newString = obj.hash;
+            let num = null;
+            for (let i = newString.length - 1; i >= 0; i--) {
+              if (!isNaN(parseInt(newString[i]))) {
+                num = parseInt(newString[i]);
+                break;
+              }
+            }
+            fd.append("slotid", num);
+            fd.append("overall", JSON.stringify(obj));
+            //  trx 3
+            try {
+              const response = await axios.post(
+                "https://zupeeter.com/Apitrx/insert_three_trx",
+                fd
+              );
+            } catch (e) {
+              console.log(e);
+            }
+          }
+        }, [3000]);
+      } catch (e) {
+        console.log(e);
+      }
     }
   });
 };
 
+const generatedTimeEveryAfterEveryFiveMin = () => {
+  let min = 4;
+  const rule = new schedule.RecurrenceRule();
+  rule.second = new schedule.Range(0, 59);
+  const job = schedule.scheduleJob(rule, function () {
+    const currentTime = new Date().getSeconds(); // Get the current time
+    const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
+    io.emit("fivemin", `${min}_${timeToSend}`);
+    if (currentTime === 0) {
+      min--;
+      if (min < 0) min = 4; // Reset min to 2 when it reaches 0
+    }
+    if (timeToSend === 9 && min === 0) {
+      try {
+        const datetoAPISend = parseInt(new Date().getTime().toString());
+        setTimeout(async () => {
+          const res = await axios.get(
+            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
+          );
+          if (res.data.data[0]) {
+            const obj = res.data.data[0];
+            const fd = new FormData();
+            fd.append("hash", `**${obj.hash.slice(-4)}`);
+            fd.append("number", obj.number);
+            fd.append("time", moment(datetoAPISend).format("HH:mm:ss"));
+            const newString = obj.hash;
+            let num = null;
+            for (let i = newString.length - 1; i >= 0; i--) {
+              if (!isNaN(parseInt(newString[i]))) {
+                num = parseInt(newString[i]);
+                break;
+              }
+            }
+            fd.append("slotid", num);
+            fd.append("overall", JSON.stringify(obj));
+            //  trx 3
+            try {
+              const response = await axios.post(
+                "https://zupeeter.com/Apitrx/insert_five_trx",
+                fd
+              );
+            } catch (e) {
+              console.log(e);
+            }
+          }
+        }, [3000]);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  });
+};
 
 let x = true;
-io.on("connection", (socket) => {
+io.on("connection", (socket) => {});
 
+const rule = new schedule.RecurrenceRule();
+rule.hour = 19; // 07:00 PM in 24-hour format
+rule.minute = 0; // 00 minutes
+rule.second = 0; // 00 seconds
+
+const job = schedule.scheduleJob(rule, function () {
+  if (x) {
+    generateAndSendMessage();
+    generatedTimeEveryAfterEveryOneMin();
+    generatedTimeEveryAfterEveryThreeMin();
+    generatedTimeEveryAfterEveryFiveMin();
+    x = false;
+  }
 });
 
-if (x) {
-  generateAndSendMessage();
-  console.log("Waiting for the next minute to start...");
-  const now = new Date();
-  const secondsUntilNextMinute = 60 - now.getSeconds(); // Calculate remaining seconds until the next minute
-  setTimeout(() => {
-    console.log("Functions called");
-    // aviator game every random time
-    generatedTimeEveryAfterEveryOneMin(); // color prediction game every 1 time generating time
-    generatedTimeEveryAfterEveryThreeMin(); // color prediction game every 3 time generating time
-    generatedTimeEveryAfterEveryFiveMin(); // color prediction game every 5 time generating time
-    x = false;
-  }, secondsUntilNextMinute * 1000); // Wait until the next minute starts
-}
+// if (x) {
+//   generateAndSendMessage();
+//   console.log("Waiting for the next minute to start...");
+//   const now = new Date();
+//   const secondsUntilNextMinute = 60 - now.getSeconds(); // Calculate remaining seconds until the next minute
+//   setTimeout(() => {
+//     generatedTimeEveryAfterEveryOneMin();
+//     generatedTimeEveryAfterEveryThreeMin();
+//     generatedTimeEveryAfterEveryFiveMin();
+//     x = false;
+//   }, secondsUntilNextMinute * 1000);
+// }
 
 app.get("/", (req, res) => {
   res.send(`<h1>server running at port=====> ${PORT}</h1>`);
