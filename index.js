@@ -4,6 +4,7 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const todoRoutes = require("./routes/todos");
 const moment = require("moment");
+const soment = require("moment-timezone");
 require("dotenv").config();
 const schedule = require("node-schedule");
 const { default: axios } = require("axios");
@@ -301,14 +302,18 @@ let trx = true;
 
 if (trx) {
   const now = new Date();
-  const currentMinute = Number(moment(now).format("mm"));
-  const currentSecond = Number(moment(now).format("ss"));
-
-  const minutesRemaining = 15 - 1 - currentMinute;
+  const nowIST = soment(now).tz("Asia/Kolkata");
+  
+  // Extract minutes and seconds from the current time in IST
+  const currentMinute = nowIST.minutes();
+  const currentSecond = nowIST.seconds();
+  
+  // Calculate remaining minutes and seconds until 22:28 IST
+  const minutesRemaining = 31 - 1 - currentMinute;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
-  console.log(currentMinute, currentSecond, delay);
+  console.log(minutesRemaining, secondsRemaining, delay);
 
   setTimeout(() => {
     generatedTimeEveryAfterEveryOneMinTRX();
