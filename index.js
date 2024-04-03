@@ -244,16 +244,18 @@ const generatedTimeEveryAfterEveryFiveMin = () => {
   });
 };
 
-let x = true;
+
 io.on("connection", (socket) => {});
 
+let x = true;
 const rule = new schedule.RecurrenceRule();
 rule.hour = 19; // 07:00 PM in 24-hour format
-rule.minute = 0; // 00 minutes
+rule.minute = 15; // 00 minutes
 rule.second = 0; // 00 seconds
 
 const job = schedule.scheduleJob(rule, function () {
   if (x) {
+    console.log("Function is called now")
     generateAndSendMessage();
     generatedTimeEveryAfterEveryOneMin();
     generatedTimeEveryAfterEveryThreeMin();
