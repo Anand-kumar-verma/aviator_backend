@@ -312,9 +312,9 @@ if (trx) {
 
   setTimeout(function () {
     console.log("Functions are called now");
-    // generatedTimeEveryAfterEveryOneMinTRX();
-    // generatedTimeEveryAfterEveryThreeMinTRX();
-    // generatedTimeEveryAfterEveryFiveMinTRX();
+    generatedTimeEveryAfterEveryOneMinTRX();
+    generatedTimeEveryAfterEveryThreeMinTRX();
+    generatedTimeEveryAfterEveryFiveMinTRX();
     trx = false;
   }, delay);
 }
