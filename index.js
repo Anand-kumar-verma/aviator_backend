@@ -301,14 +301,14 @@ let trx = true;
 
 if (trx) {
   const now = new Date();
-  const currentMinute = now.getMinutes();
-  const currentSecond = now.getSeconds();
+  const currentMinute = Number(moment(now).format("mm"));
+  const currentSecond = Number(moment(now).format("ss"));
 
-  const minutesRemaining = 9 - 1 - currentMinute;
+  const minutesRemaining = 15 - 1 - currentMinute;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
-  console.log(minutesRemaining, secondsRemaining, delay);
+  console.log(currentMinute, currentSecond, delay);
 
   setTimeout(() => {
     generatedTimeEveryAfterEveryOneMinTRX();
