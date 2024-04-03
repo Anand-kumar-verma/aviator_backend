@@ -145,7 +145,7 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
       currentTime.getSeconds() > 0
         ? 60 - currentTime.getSeconds()
         : currentTime.getSeconds();
-    // io.emit("onemin", timeToSend); 
+    io.emit("onemintrx", timeToSend); 
     if (timeToSend === 9) {
       try {
         const datetoAPISend = parseInt(new Date().getTime().toString());
@@ -195,7 +195,7 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
   const job = schedule.scheduleJob(rule, function () {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
-    // io.emit("threemin", `${min}_${timeToSend}`);
+    io.emit("threemintrx", `${min}_${timeToSend}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
@@ -248,7 +248,7 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
   const job = schedule.scheduleJob(rule, function () {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
-    // io.emit("fivemin", `${min}_${timeToSend}`);
+    io.emit("fivemintrx", `${min}_${timeToSend}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 4; // Reset min to 2 when it reaches 0
@@ -308,14 +308,14 @@ if (trx) {
   const currentMinute = now.getMinutes();
   const currentSecond = now.getSeconds();
 
-  const minutesRemaining = 45 - currentMinute;
-  const secondsRemaining = 0 - currentSecond;
+  const minutesRemaining = 8 - currentMinute;
+  const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
+console.log(minutesRemaining,secondsRemaining,delay)
 
   setTimeout(function () {
     console.log("Functions are called now");
-    generateAndSendMessage();
     generatedTimeEveryAfterEveryOneMinTRX();
     generatedTimeEveryAfterEveryThreeMinTRX();
     generatedTimeEveryAfterEveryFiveMinTRX();
