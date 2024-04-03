@@ -308,7 +308,7 @@ if (trx) {
   const currentMinute = now.getMinutes();
   const currentSecond = now.getSeconds();
 
-  const minutesRemaining = 8 - currentMinute;
+  const minutesRemaining = 15-1 - currentMinute;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
@@ -319,8 +319,9 @@ console.log(minutesRemaining,secondsRemaining,delay)
     generatedTimeEveryAfterEveryOneMinTRX();
     generatedTimeEveryAfterEveryThreeMinTRX();
     generatedTimeEveryAfterEveryFiveMinTRX();
+    trx = false;
   }, delay);
-  trx = false;
+ 
 }
 
 // const job = schedule.scheduleJob(rule, function () {
