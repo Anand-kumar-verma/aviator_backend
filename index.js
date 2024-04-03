@@ -304,14 +304,13 @@ if (trx) {
   const currentMinute = now.getMinutes();
   const currentSecond = now.getSeconds();
 
-  const minutesRemaining = 55 - 1 - currentMinute;
+  const minutesRemaining = 58 - 1 - currentMinute;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
   console.log(minutesRemaining, secondsRemaining, delay);
 
-  setTimeout(function () {
-    console.log("Functions are called now");
+  setTimeout(() => {
     generatedTimeEveryAfterEveryOneMinTRX();
     generatedTimeEveryAfterEveryThreeMinTRX();
     generatedTimeEveryAfterEveryFiveMinTRX();
