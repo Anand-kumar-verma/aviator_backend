@@ -96,6 +96,56 @@ function generatedTimeEveryAfterEveryOneMin() {
         ? 60 - currentTime.getSeconds()
         : currentTime.getSeconds();
     io.emit("onemin", timeToSend); // Emit the formatted time
+   
+  });
+}
+
+// color prediction game time generated every 3 min
+const generatedTimeEveryAfterEveryThreeMin = () => {
+  let min = 2;
+  const rule = new schedule.RecurrenceRule();
+  rule.second = new schedule.Range(0, 59);
+  const job = schedule.scheduleJob(rule, function () {
+    const currentTime = new Date().getSeconds(); // Get the current time
+    const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
+    io.emit("threemin", `${min}_${timeToSend}`);
+    if (currentTime === 0) {
+      min--;
+      if (min < 0) min = 2; // Reset min to 2 when it reaches 0
+    }
+
+  });
+};
+
+const generatedTimeEveryAfterEveryFiveMin = () => {
+  let min = 4;
+  const rule = new schedule.RecurrenceRule();
+  rule.second = new schedule.Range(0, 59);
+  const job = schedule.scheduleJob(rule, function () {
+    const currentTime = new Date().getSeconds(); // Get the current time
+    const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
+    io.emit("fivemin", `${min}_${timeToSend}`);
+    if (currentTime === 0) {
+      min--;
+      if (min < 0) min = 4; // Reset min to 2 when it reaches 0
+    }
+   
+  });
+};
+
+
+// TRX
+// color prediction game time generated every 1 min
+function generatedTimeEveryAfterEveryOneMinTRX() {
+  const rule = new schedule.RecurrenceRule();
+  rule.second = new schedule.Range(0, 59);
+  const job = schedule.scheduleJob(rule, function () {
+    const currentTime = new Date();
+    const timeToSend =
+      currentTime.getSeconds() > 0
+        ? 60 - currentTime.getSeconds()
+        : currentTime.getSeconds();
+    // io.emit("onemin", timeToSend); 
     if (timeToSend === 9) {
       try {
         const datetoAPISend = parseInt(new Date().getTime().toString());
@@ -138,14 +188,14 @@ function generatedTimeEveryAfterEveryOneMin() {
 }
 
 // color prediction game time generated every 3 min
-const generatedTimeEveryAfterEveryThreeMin = () => {
+const generatedTimeEveryAfterEveryThreeMinTRX = () => {
   let min = 2;
   const rule = new schedule.RecurrenceRule();
   rule.second = new schedule.Range(0, 59);
   const job = schedule.scheduleJob(rule, function () {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
-    io.emit("threemin", `${min}_${timeToSend}`);
+    // io.emit("threemin", `${min}_${timeToSend}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
@@ -191,14 +241,14 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
   });
 };
 
-const generatedTimeEveryAfterEveryFiveMin = () => {
+const generatedTimeEveryAfterEveryFiveMinTRX = () => {
   let min = 4;
   const rule = new schedule.RecurrenceRule();
   rule.second = new schedule.Range(0, 59);
   const job = schedule.scheduleJob(rule, function () {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
-    io.emit("fivemin", `${min}_${timeToSend}`);
+    // io.emit("fivemin", `${min}_${timeToSend}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 4; // Reset min to 2 when it reaches 0
@@ -247,12 +297,13 @@ const generatedTimeEveryAfterEveryFiveMin = () => {
 io.on("connection", (socket) => {});
 
 let x = true;
+let trx = true;
 // const rule = new schedule.RecurrenceRule();
 // rule.hour = 19; // 07:00 PM in 24-hour format
 // rule.minute = 15; // 00 minutes
 // rule.second = 0; // 00 seconds
 
-if (x) {
+if (trx) {
   const now = new Date();
   const currentMinute = now.getMinutes();
   const currentSecond = now.getSeconds();
@@ -265,11 +316,11 @@ if (x) {
   setTimeout(function () {
     console.log("Functions are called now");
     generateAndSendMessage();
-    generatedTimeEveryAfterEveryOneMin();
-    generatedTimeEveryAfterEveryThreeMin();
-    generatedTimeEveryAfterEveryFiveMin();
+    generatedTimeEveryAfterEveryOneMinTRX();
+    generatedTimeEveryAfterEveryThreeMinTRX();
+    generatedTimeEveryAfterEveryFiveMinTRX();
   }, delay);
-  x = false;
+  trx = false;
 }
 
 // const job = schedule.scheduleJob(rule, function () {
@@ -283,18 +334,18 @@ if (x) {
 //   }
 // });
 
-// if (x) {
-//   generateAndSendMessage();
-//   console.log("Waiting for the next minute to start...");
-//   const now = new Date();
-//   const secondsUntilNextMinute = 60 - now.getSeconds(); // Calculate remaining seconds until the next minute
-//   setTimeout(() => {
-//     generatedTimeEveryAfterEveryOneMin();
-//     generatedTimeEveryAfterEveryThreeMin();
-//     generatedTimeEveryAfterEveryFiveMin();
-//     x = false;
-//   }, secondsUntilNextMinute * 1000);
-// }
+if (x) {
+  generateAndSendMessage();
+  console.log("Waiting for the next minute to start...");
+  const now = new Date();
+  const secondsUntilNextMinute = 60 - now.getSeconds(); // Calculate remaining seconds until the next minute
+  setTimeout(() => {
+    generatedTimeEveryAfterEveryOneMin();
+    generatedTimeEveryAfterEveryThreeMin();
+    generatedTimeEveryAfterEveryFiveMin();
+    x = false;
+  }, secondsUntilNextMinute * 1000);
+}
 
 app.get("/", (req, res) => {
   res.send(`<h1>server running at port=====> ${PORT}</h1>`);
