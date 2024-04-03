@@ -296,7 +296,7 @@ io.on("connection", (socket) => {
     const currentMinute = now.getMinutes();
     const currentSecond = now.getSeconds();
 
-    const minutesRemaining = 45 - 1 - currentMinute;
+    const minutesRemaining = 48 - 1 - currentMinute;
     const secondsRemaining = 60 - currentSecond;
 
     const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
