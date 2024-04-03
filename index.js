@@ -96,7 +96,6 @@ function generatedTimeEveryAfterEveryOneMin() {
         ? 60 - currentTime.getSeconds()
         : currentTime.getSeconds();
     io.emit("onemin", timeToSend); // Emit the formatted time
-   
   });
 }
 
@@ -113,7 +112,6 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
     }
-
   });
 };
 
@@ -129,10 +127,8 @@ const generatedTimeEveryAfterEveryFiveMin = () => {
       min--;
       if (min < 0) min = 4; // Reset min to 2 when it reaches 0
     }
-   
   });
 };
-
 
 // TRX
 // color prediction game time generated every 1 min
@@ -145,7 +141,7 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
       currentTime.getSeconds() > 0
         ? 60 - currentTime.getSeconds()
         : currentTime.getSeconds();
-    io.emit("onemintrx", timeToSend); 
+    io.emit("onemintrx", timeToSend);
     if (timeToSend === 9) {
       try {
         const datetoAPISend = parseInt(new Date().getTime().toString());
@@ -308,20 +304,19 @@ if (trx) {
   const currentMinute = now.getMinutes();
   const currentSecond = now.getSeconds();
 
-  const minutesRemaining = 20-1 - currentMinute;
+  const minutesRemaining = 20 - 1 - currentMinute;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
-console.log(minutesRemaining,secondsRemaining,delay)
+  console.log(minutesRemaining, secondsRemaining, delay);
 
   setTimeout(function () {
     console.log("Functions are called now");
-    generatedTimeEveryAfterEveryOneMinTRX();
-    generatedTimeEveryAfterEveryThreeMinTRX();
-    generatedTimeEveryAfterEveryFiveMinTRX();
+    // generatedTimeEveryAfterEveryOneMinTRX();
+    // generatedTimeEveryAfterEveryThreeMinTRX();
+    // generatedTimeEveryAfterEveryFiveMinTRX();
     trx = false;
   }, delay);
- 
 }
 
 // const job = schedule.scheduleJob(rule, function () {
