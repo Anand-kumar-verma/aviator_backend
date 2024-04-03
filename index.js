@@ -153,7 +153,7 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
           const res = await axios.get(
             `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
           );
-          if (res.data.data[0]) {
+          if (res?.data?.data[0]) {
             const obj = res.data.data[0];
             const fd = new FormData();
             fd.append("hash", `**${obj.hash.slice(-4)}`);
@@ -179,7 +179,7 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
               console.log(e);
             }
           }
-        }, [3000]);
+        }, [5000]);
       } catch (e) {
         console.log(e);
       }
@@ -207,7 +207,7 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
           const res = await axios.get(
             `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
           );
-          if (res.data.data[0]) {
+          if (res?.data?.data[0]) {
             const obj = res.data.data[0];
             const fd = new FormData();
             fd.append("hash", `**${obj.hash.slice(-4)}`);
@@ -233,7 +233,7 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
               console.log(e);
             }
           }
-        }, [3000]);
+        }, [5000]);
       } catch (e) {
         console.log(e);
       }
@@ -260,7 +260,7 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
           const res = await axios.get(
             `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
           );
-          if (res.data.data[0]) {
+          if (res?.data?.data[0]) {
             const obj = res.data.data[0];
             const fd = new FormData();
             fd.append("hash", `**${obj.hash.slice(-4)}`);
@@ -286,7 +286,7 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
               console.log(e);
             }
           }
-        }, [3000]);
+        }, [5000]);
       } catch (e) {
         console.log(e);
       }
@@ -308,7 +308,7 @@ if (trx) {
   const currentMinute = now.getMinutes();
   const currentSecond = now.getSeconds();
 
-  const minutesRemaining = 15-1 - currentMinute;
+  const minutesRemaining = 20-1 - currentMinute;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
