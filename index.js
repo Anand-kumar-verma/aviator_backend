@@ -304,7 +304,7 @@ if (trx) {
   const currentMinute = now.getMinutes();
   const currentSecond = now.getSeconds();
 
-  const minutesRemaining = 32 - 1 - currentMinute;
+  const minutesRemaining = 35 - 1 - currentMinute;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
@@ -312,9 +312,9 @@ if (trx) {
 
   setTimeout(function () {
     console.log("Functions are called now");
-    // generatedTimeEveryAfterEveryOneMinTRX();
-    // generatedTimeEveryAfterEveryThreeMinTRX();
-    // generatedTimeEveryAfterEveryFiveMinTRX();
+    generatedTimeEveryAfterEveryOneMinTRX();
+    generatedTimeEveryAfterEveryThreeMinTRX();
+    generatedTimeEveryAfterEveryFiveMinTRX();
     trx = false;
   }, delay);
 }
