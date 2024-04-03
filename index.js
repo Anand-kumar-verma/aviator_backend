@@ -304,7 +304,7 @@ if (trx) {
   const currentMinute = now.getMinutes();
   const currentSecond = now.getSeconds();
 
-  const minutesRemaining = 20 - 1 - currentMinute;
+  const minutesRemaining = 30 - 1 - currentMinute;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
