@@ -244,25 +244,44 @@ const generatedTimeEveryAfterEveryFiveMin = () => {
   });
 };
 
-
 io.on("connection", (socket) => {});
 
 let x = true;
-const rule = new schedule.RecurrenceRule();
-rule.hour = 19; // 07:00 PM in 24-hour format
-rule.minute = 15; // 00 minutes
-rule.second = 0; // 00 seconds
+// const rule = new schedule.RecurrenceRule();
+// rule.hour = 19; // 07:00 PM in 24-hour format
+// rule.minute = 15; // 00 minutes
+// rule.second = 0; // 00 seconds
 
-const job = schedule.scheduleJob(rule, function () {
-  if (x) {
-    console.log("Function is called now")
+if (x) {
+  const now = new Date();
+  const currentMinute = now.getMinutes();
+  const currentSecond = now.getSeconds();
+
+  const minutesRemaining = 45 - currentMinute;
+  const secondsRemaining = 0 - currentSecond;
+
+  const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
+
+  setTimeout(function () {
+    console.log("Functions are called now");
     generateAndSendMessage();
     generatedTimeEveryAfterEveryOneMin();
     generatedTimeEveryAfterEveryThreeMin();
     generatedTimeEveryAfterEveryFiveMin();
-    x = false;
-  }
-});
+  }, delay);
+  x = false;
+}
+
+// const job = schedule.scheduleJob(rule, function () {
+//   if (x) {
+//     console.log("Function is called now")
+//     generateAndSendMessage();
+//     generatedTimeEveryAfterEveryOneMin();
+//     generatedTimeEveryAfterEveryThreeMin();
+//     generatedTimeEveryAfterEveryFiveMin();
+//     x = false;
+//   }
+// });
 
 // if (x) {
 //   generateAndSendMessage();
