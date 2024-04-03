@@ -309,10 +309,10 @@ if (trx) {
   const currentSecond = nowIST.seconds();
   
   // Calculate remaining minutes and seconds until 22:28 IST
-  const minutesRemaining = 52  - currentMinute;
+  const minutesRemaining = 57  - currentMinute -1;
   const secondsRemaining = 60 - currentSecond;
 
-  const delay = ((minutesRemaining * 60 + secondsRemaining)-1) * 1000;
+  const delay = ((minutesRemaining * 60 + secondsRemaining)) * 1000;
   console.log(minutesRemaining, secondsRemaining, delay);
 
   setTimeout(() => {
