@@ -290,7 +290,27 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
   });
 };
 
-io.on("connection", (socket) => {});
+io.on("connection", (socket) => {
+  if (trx) {
+    const now = new Date();
+    const currentMinute = now.getMinutes();
+    const currentSecond = now.getSeconds();
+
+    const minutesRemaining = 45 - 1 - currentMinute;
+    const secondsRemaining = 60 - currentSecond;
+
+    const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
+    console.log(minutesRemaining, secondsRemaining, delay);
+
+    setTimeout(function () {
+      console.log("Functions are called now");
+      generatedTimeEveryAfterEveryOneMinTRX();
+      generatedTimeEveryAfterEveryThreeMinTRX();
+      generatedTimeEveryAfterEveryFiveMinTRX();
+      trx = false;
+    }, delay);
+  }
+});
 
 let x = true;
 let trx = true;
@@ -298,26 +318,6 @@ let trx = true;
 // rule.hour = 19; // 07:00 PM in 24-hour format
 // rule.minute = 15; // 00 minutes
 // rule.second = 0; // 00 seconds
-
-if (trx) {
-  const now = new Date();
-  const currentMinute = now.getMinutes();
-  const currentSecond = now.getSeconds();
-
-  const minutesRemaining = 35 - 1 - currentMinute;
-  const secondsRemaining = 60 - currentSecond;
-
-  const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
-  console.log(minutesRemaining, secondsRemaining, delay);
-
-  setTimeout(function () {
-    console.log("Functions are called now");
-    generatedTimeEveryAfterEveryOneMinTRX();
-    generatedTimeEveryAfterEveryThreeMinTRX();
-    generatedTimeEveryAfterEveryFiveMinTRX();
-    trx = false;
-  }, delay);
-}
 
 // const job = schedule.scheduleJob(rule, function () {
 //   if (x) {
