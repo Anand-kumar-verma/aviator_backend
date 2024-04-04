@@ -145,17 +145,23 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
     io.emit("onemintrx", timeToSend);
     if (timeToSend === 9) {
       try {
-        const datetoAPISend = parseInt(new Date().getTime().toString());
+      //  const timetosend =  moment.tz("Asia/Kolkata").currentTime.add(2, 'hours').add(30, 'minutes').valueOf()
+        // const datetoAPISend = parseInt(new Date().getTime().toString());
+        const actualtome = soment.tz("Asia/Kolkata")
+        const time = actualtome.add(2, 'hours').add(30, 'minutes').valueOf() 
+        const timetosend = actualtome.valueOf() 
+
         setTimeout(async () => {
           const res = await axios.get(
-            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
+            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${timetosend}&end_timestamp=${timetosend}`
           );
           if (res?.data?.data[0]) {
             const obj = res.data.data[0];
             const fd = new FormData();
             fd.append("hash", `**${obj.hash.slice(-4)}`);
             fd.append("number", obj.number);
-            fd.append("time", moment(datetoAPISend).format("HH:mm:ss"));
+            fd.append("time", moment(time).format("HH:mm:ss"));
+
             const newString = obj.hash;
             let num = null;
             for (let i = newString.length - 1; i >= 0; i--) {
@@ -193,23 +199,28 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("threemintrx", `${min}_${timeToSend}`);
+    console.log("threemintrx", `${min}_${timeToSend}`)
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
     }
     if (timeToSend === 9 && min === 0) {
       try {
-        const datetoAPISend = parseInt(new Date().getTime().toString());
+        console.log("function hit")
+        // const datetoAPISend = parseInt(new Date().getTime().toString());
+        const actualtome = soment.tz("Asia/Kolkata")
+        const time = actualtome.add(2, 'hours').add(30, 'minutes').valueOf() 
+        const timetosend = actualtome.valueOf() 
         setTimeout(async () => {
           const res = await axios.get(
-            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
+            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${timetosend}&end_timestamp=${timetosend}`
           );
           if (res?.data?.data[0]) {
             const obj = res.data.data[0];
             const fd = new FormData();
             fd.append("hash", `**${obj.hash.slice(-4)}`);
             fd.append("number", obj.number);
-            fd.append("time", moment(datetoAPISend).format("HH:mm:ss"));
+            fd.append("time", moment(time).format("HH:mm:ss"));
             const newString = obj.hash;
             let num = null;
             for (let i = newString.length - 1; i >= 0; i--) {
@@ -252,17 +263,21 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
     }
     if (timeToSend === 9 && min === 0) {
       try {
-        const datetoAPISend = parseInt(new Date().getTime().toString());
+        // const datetoAPISend = parseInt(new Date().getTime().toString());
+        const actualtome = soment.tz("Asia/Kolkata")
+        const time = actualtome.add(2, 'hours').add(30, 'minutes').valueOf() 
+        const timetosend = actualtome.valueOf() 
+
         setTimeout(async () => {
           const res = await axios.get(
-            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
+            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${timetosend}&end_timestamp=${timetosend}`
           );
           if (res?.data?.data[0]) {
             const obj = res.data.data[0];
             const fd = new FormData();
             fd.append("hash", `**${obj.hash.slice(-4)}`);
             fd.append("number", obj.number);
-            fd.append("time", moment(datetoAPISend).format("HH:mm:ss"));
+            fd.append("time", moment(time).format("HH:mm:ss"));
             const newString = obj.hash;
             let num = null;
             for (let i = newString.length - 1; i >= 0; i--) {
@@ -299,17 +314,25 @@ let trx = true;
 // rule.hour = 19; // 07:00 PM in 24-hour format
 // rule.minute = 15; // 00 minutes
 // rule.second = 0; // 00 seconds
-
+// console.log(moment(soment.tz("Asia/Kolkata").valueOf()).format("HH:mm:ss"))
+// const formattedTime = moment(currentTimeMillis).tz("Asia/Kolkata").format("hh:mm:ss A");
+const time = soment.tz("Asia/Kolkata").add(2, 'hours').add(30, 'minutes').valueOf() 
+console.log(time,moment(time).format("HH:mm:ss"))
 if (trx) {
   const now = new Date();
   const nowIST = soment(now).tz("Asia/Kolkata");
+  // const fiveHoursThirtyMinutesLater = nowIST.clone().add(5, 'hours').add(30, 'minutes');
+
+  // // Format the time in 12-hour format with AM/PM
+  // const formattedTime = fiveHoursThirtyMinutesLater.format("hh:mm:ss A");
   
-  // Extract minutes and seconds from the current time in IST
+  // console.log(formattedTime);
+  // // Extract minutes and seconds from the current time in IST
   const currentMinute = nowIST.minutes();
   const currentSecond = nowIST.seconds();
   
   // Calculate remaining minutes and seconds until 22:28 IST
-  const minutesRemaining = 60  - currentMinute -1;
+  const minutesRemaining = 45  - currentMinute -1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = ((minutesRemaining * 60 + secondsRemaining)) * 1000;
@@ -322,6 +345,8 @@ if (trx) {
     trx = false;
   }, delay);
 }
+
+// generatedTimeEveryAfterEveryThreeMinTRX();
 
 // const job = schedule.scheduleJob(rule, function () {
 //   if (x) {
