@@ -148,7 +148,7 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
       //  const timetosend =  moment.tz("Asia/Kolkata").currentTime.add(2, 'hours').add(30, 'minutes').valueOf()
         const datetoAPISend = parseInt(new Date().getTime().toString());
         const actualtome = soment.tz("Asia/Kolkata")
-        const time = actualtome.add(2, 'hours').add(30, 'minutes').valueOf() 
+        const time = actualtome.add(8, 'hours').valueOf() 
         const timetosend = actualtome.valueOf() 
 
         setTimeout(async () => {
@@ -211,7 +211,7 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
         console.log("function hit")
         const datetoAPISend = parseInt(new Date().getTime().toString());
         const actualtome = soment.tz("Asia/Kolkata")
-        const time = actualtome.add(2, 'hours').add(30, 'minutes').valueOf() 
+        const time = actualtome.add(8, 'hours').valueOf() 
         const timetosend = actualtome.valueOf() 
         setTimeout(async () => {
           const res = await axios.get(
@@ -268,7 +268,7 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
       try {
         const datetoAPISend = parseInt(new Date().getTime().toString());
         const actualtome = soment.tz("Asia/Kolkata")
-        const time = actualtome.add(2, 'hours').add(30, 'minutes').valueOf() 
+        const time = actualtome.add(8, 'hours').valueOf() 
         const timetosend = actualtome.valueOf() 
 
         setTimeout(async () => {
@@ -331,7 +331,7 @@ if (trx) {
   const currentSecond = nowIST.seconds();
   
   // Calculate remaining minutes and seconds until 22:28 IST
-  const minutesRemaining = 15  - currentMinute -1;
+  const minutesRemaining = 30  - currentMinute -1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = ((minutesRemaining * 60 + secondsRemaining)) * 1000;
