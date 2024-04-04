@@ -338,9 +338,9 @@ if (trx) {
   console.log(minutesRemaining, secondsRemaining, delay);
 
   setTimeout(() => {
-    // generatedTimeEveryAfterEveryOneMinTRX();
-    // generatedTimeEveryAfterEveryThreeMinTRX();
-    // generatedTimeEveryAfterEveryFiveMinTRX();
+    generatedTimeEveryAfterEveryOneMinTRX();
+    generatedTimeEveryAfterEveryThreeMinTRX();
+    generatedTimeEveryAfterEveryFiveMinTRX();
     trx = false;
   }, delay);
 }
