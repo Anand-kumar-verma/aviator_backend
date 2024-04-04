@@ -197,9 +197,10 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
 const generatedTimeEveryAfterEveryThreeMinTRX = () => {
   let min = 2;
   const rule = new schedule.RecurrenceRule();
-  rule.second = new schedule.Range(0, 59);
+ rule.second = new schedule.Range(0, 59);
   const job = schedule.scheduleJob(rule, function () {
-    const currentTime = new Date().getSeconds(); // Get the current time
+    const currentTime =new Date().getSeconds();  // Get the current time
+
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("threemintrx", `${min}_${timeToSend}`);
     if (currentTime === 0) {
