@@ -428,7 +428,7 @@ if (trx) {
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
-  // console.log(minutesRemaining, secondsRemaining, delay);
+  console.log(minutesRemaining, secondsRemaining, delay);
 
   setTimeout(() => {
     generatedTimeEveryAfterEveryOneMinTRX();
