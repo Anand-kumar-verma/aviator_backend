@@ -169,16 +169,13 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
   rule.second = new schedule.Range(0, 59);
   const job = schedule.scheduleJob(rule, function () {
     const currentTime = new Date();
-    const time = moment(currentTime).tz("Asia/Kolkata")
-    const call_api_time = time.seconds()
     const timeToSend =
-    time.seconds() > 0
-        ? 60 - time.seconds()
-        : time.seconds();
-
+      currentTime.getSeconds() > 0
+        ? 60 - currentTime.getSeconds()
+        : currentTime.getSeconds();
     io.emit("onemintrx", timeToSend);
 
-    if (call_api_time === 51) {
+    if (timeToSend === 9) {
       const datetoAPISend = parseInt(new Date().getTime().toString());
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome.add(8, "hours").valueOf();
@@ -324,19 +321,57 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
   const rule = new schedule.RecurrenceRule();
   rule.second = new schedule.Range(0, 59);
   const job = schedule.scheduleJob(rule, function () {
-    const currentTime = new Date();
-    const time = moment(currentTime).tz("Asia/Kolkata")
-    const timeToSend =
-    time.seconds() > 0
-        ? 60 - time.seconds()
-        : time.seconds();
+    const currentTime = new Date().getSeconds(); // Get the current time
 
+    const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("threemintrx", `${min}_${timeToSend}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
     }
-
+    // if (timeToSend === 9 && min === 0) {
+    //   try {
+    //     console.log("function hit")
+    //     const datetoAPISend = parseInt(new Date().getTime().toString());
+    //     const actualtome = soment.tz("Asia/Kolkata")
+    //     const time = actualtome.add(8, 'hours').valueOf()
+    //     const timetosend = actualtome.valueOf()
+    //     setTimeout(async () => {
+    //       const res = await axios.get(
+    //         `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
+    //       );
+    //       if (res?.data?.data[0]) {
+    //         const obj = res.data.data[0];
+    //         const fd = new FormData();
+    //         fd.append("hash", `**${obj.hash.slice(-4)}`);
+    //         fd.append("digits", `${obj.hash.slice(-5)}`);
+    //         fd.append("number", obj.number);
+    //         fd.append("time", moment(time).format("HH:mm:ss"));
+    //         const newString = obj.hash;
+    //         let num = null;
+    //         for (let i = newString.length - 1; i >= 0; i--) {
+    //           if (!isNaN(parseInt(newString[i]))) {
+    //             num = parseInt(newString[i]);
+    //             break;
+    //           }
+    //         }
+    //         fd.append("slotid", num);
+    //         fd.append("overall", JSON.stringify(obj));
+    //         //  trx 3
+    //         try {
+    //           const response = await axios.post(
+    //             "https://zupeeter.com/Apitrx/insert_three_trx",
+    //             fd
+    //           );
+    //         } catch (e) {
+    //           console.log(e);
+    //         }
+    //       }
+    //     }, [5000]);
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // }
   });
 };
 
@@ -345,17 +380,56 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
   const rule = new schedule.RecurrenceRule();
   rule.second = new schedule.Range(0, 59);
   const job = schedule.scheduleJob(rule, function () {
-    const currentTime = new Date();
-    const time = moment(currentTime).tz("Asia/Kolkata")
-    const timeToSend =
-    time.seconds() > 0
-        ? 60 - time.seconds()
-        : time.seconds();
+    const currentTime = new Date().getSeconds(); // Get the current time
+    const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("fivemintrx", `${min}_${timeToSend}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 4; // Reset min to 2 when it reaches 0
     }
+    // if (timeToSend === 9 && min === 0) {
+    //   try {
+    //     const datetoAPISend = parseInt(new Date().getTime().toString());
+    //     const actualtome = soment.tz("Asia/Kolkata")
+    //     const time = actualtome.add(8, 'hours').valueOf()
+    //     const timetosend = actualtome.valueOf()
+
+    //     setTimeout(async () => {
+    //       const res = await axios.get(
+    //         `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
+    //       );
+    //       if (res?.data?.data[0]) {
+    //         const obj = res.data.data[0];
+    //         const fd = new FormData();
+    //         fd.append("hash", `**${obj.hash.slice(-4)}`);
+    //         fd.append("digits", `${obj.hash.slice(-5)}`);
+    //         fd.append("number", obj.number);
+    //         fd.append("time", moment(time).format("HH:mm:ss"));
+    //         const newString = obj.hash;
+    //         let num = null;
+    //         for (let i = newString.length - 1; i >= 0; i--) {
+    //           if (!isNaN(parseInt(newString[i]))) {
+    //             num = parseInt(newString[i]);
+    //             break;
+    //           }
+    //         }
+    //         fd.append("slotid", num);
+    //         fd.append("overall", JSON.stringify(obj));
+    //         //  trx 3
+    //         try {
+    //           const response = await axios.post(
+    //             "https://zupeeter.com/Apitrx/insert_five_trx",
+    //             fd
+    //           );
+    //         } catch (e) {
+    //           console.log(e);
+    //         }
+    //       }
+    //     }, [5000]);
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // }
   });
 };
 
@@ -374,7 +448,7 @@ if (trx) {
   const currentSecond = nowIST.seconds();
 
   // Calculate remaining minutes and seconds until 22:28 IST
-  const minutesRemaining = 15 - currentMinute - 1;
+  const minutesRemaining = 30 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
@@ -387,62 +461,24 @@ if (trx) {
     trx = false;
   }, delay);
 }
+// generatedTimeEveryAfterEveryOneMinTRX();
 
-
-function generatedTimeEveryAfterEveryOneMinTRXTest() {
-  let three = 0;
-  let five = 0;
-  console.log(moment(new Date()).format("HH:mm:ss"));
-  const rule = new schedule.RecurrenceRule();
-  rule.second = new schedule.Range(0, 59);
-  const job = schedule.scheduleJob(rule, function () {
-    // const currentTime = new Date();
-    const currentTime = moment(new Date()).add(1, 'hours').add(20, 'minutes').toDate();
-    console.log(moment(currentTime).format("HH:mm:ss"))
-    const hitApitat = currentTime.getSeconds()
-    const timeToSend =
-      currentTime.getSeconds() > 0
-        ? 60 - currentTime.getSeconds()
-        : currentTime.getSeconds();
-    // io.emit("onemintrx", timeToSend);
-    // io.emit("twomintrx", three,timeToSend);
-    // io.emit("threemintrx", five,timeToSend);
-console.log(timeToSend,"TIme to send");
-    if (timeToSend === 9) {
-      console.log(three,three,five)
-      if (three === 2) {
-        console.log(moment(currentTime).format("HH:mm:ss"),"two min")
-      } 
-      if (five === 4) {
-        console.log(moment(currentTime).format("HH:mm:ss"),"three min")
-      } 
-      try {
-        if (three === 2) {
-          three = 0;
-        } else {
-          three++;
-        }
-
-        if (five === 4) {
-          five = 0;
-        } else {
-          five++;
-        }
-
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  });
-}
-
+// const job = schedule.scheduleJob(rule, function () {
+//   if (x) {
+//     console.log("Function is called now")
+//     generateAndSendMessage();
+//     generatedTimeEveryAfterEveryOneMin();
+//     generatedTimeEveryAfterEveryThreeMin();
+//     generatedTimeEveryAfterEveryFiveMin();
+//     x = false;
+//   }
+// });
 
 if (x) {
   generateAndSendMessage();
   console.log("Waiting for the next minute to start...");
   const now = new Date();
   const secondsUntilNextMinute = 60 - now.getSeconds(); // Calculate remaining seconds until the next minute
-  console.log(secondsUntilNextMinute);
   setTimeout(() => {
     generatedTimeEveryAfterEveryOneMin();
     generatedTimeEveryAfterEveryThreeMin();
