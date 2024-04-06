@@ -86,6 +86,34 @@ function generateAndSendMessage() {
   setTimeout(generateAndSendMessage, time * 1000 + 8000);
 }
 
+function generateTimeSunLottery() {
+  let threemin = 2;
+  let five = 4;
+  const rule = new schedule.RecurrenceRule();
+  rule.second = new schedule.Range(0, 59);
+  const job = schedule.scheduleJob(rule, function () {
+    const currentTime = new Date();
+    const timeToSend =
+      currentTime.getSeconds() > 0
+        ? 60 - currentTime.getSeconds()
+        : currentTime.getSeconds();
+
+    io.emit("onemin", timeToSend); // Emit the formatted time
+    io.emit("threemin", `${threemin}_${timeToSend}`);
+    io.emit("fivemin", `${five}_${timeToSend}`);
+
+    if (currentTime === 0) {
+      threemin--;
+      if (threemin < 0) threemin = 2; // Reset min to 2 when it reaches 0
+    }
+    if (currentTime === 0) {
+      five--;
+      if (five < 0) five = 4; // Reset min to 2 when it reaches 0
+    }
+
+  });
+}
+
 // color prediction game time generated every 1 min
 function generatedTimeEveryAfterEveryOneMin() {
   const rule = new schedule.RecurrenceRule();
@@ -409,11 +437,7 @@ io.on("connection", (socket) => {});
 
 let x = true;
 let trx = true;
-const time = soment
-  .tz("Asia/Kolkata")
-  .add(2, "hours")
-  .add(30, "minutes")
-  .valueOf();
+
 // console.log(time,moment(time).format("HH:mm:ss"))
 if (trx) {
   const now = new Date();
@@ -424,7 +448,7 @@ if (trx) {
   const currentSecond = nowIST.seconds();
 
   // Calculate remaining minutes and seconds until 22:28 IST
-  const minutesRemaining = 30 - currentMinute - 1;
+  const minutesRemaining = 45 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
