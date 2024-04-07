@@ -180,12 +180,12 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome.add(8, "hours").valueOf();
       console.log("51 min for 1 min",moment(time).format("HH:mm:ss"));
-      if (threeminApi) {
+      if (three === 1 && threeminApi) {
         generatedTimeEveryAfterEveryThreeMinTRXAPICall3Sec();
         threeminApi = false;
       }
 
-      if (fiveminApi) {
+      if (five === 3 && fiveminApi) {
         generatedTimeEveryAfterEveryThreeMinTRXAPICall5Sec();
         fiveminApi = false;
       }
