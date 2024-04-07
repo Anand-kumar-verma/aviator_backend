@@ -178,15 +178,15 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
       const datetoAPISend = parseInt(new Date().getTime().toString());
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome.add(8, "hours").valueOf();
-      if (three === 1 && threeminApi) {
-        generatedTimeEveryAfterEveryThreeMinTRXAPICall3Sec();
-        threeminApi = false;
-      }
+      // if (three === 3 && threeminApi) {
+      //   generatedTimeEveryAfterEveryThreeMinTRXAPICall3Sec();
+      //   threeminApi = false;
+      // }
 
-      if (five === 3 && fiveminApi) {
-        generatedTimeEveryAfterEveryThreeMinTRXAPICall5Sec();
-        fiveminApi = false;
-      }
+      // if (five === 3 && fiveminApi) {
+      //   generatedTimeEveryAfterEveryThreeMinTRXAPICall5Sec();
+      //   fiveminApi = false;
+      // }
 
       try {
         if (three === 2) {
@@ -336,6 +336,47 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("threemintrx", `${min}_${timeToSend}`);
+    if(min === 0 && timeToSend === 9){
+      const datetoAPISend = parseInt(new Date().getTime().toString());
+      const actualtome = soment.tz("Asia/Kolkata");
+      const time = actualtome.add(8, "hours").valueOf();
+      try {
+        setTimeout(async () => {
+          const res = await axios.get(
+            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
+          );
+          if (res?.data?.data[0]) {
+            const obj = res.data.data[0];
+            const fd = new FormData();
+            fd.append("hash", `**${obj.hash.slice(-4)}`);
+            fd.append("digits", `${obj.hash.slice(-5)}`);
+            fd.append("number", obj.number);
+            fd.append("time", moment(time).format("HH:mm:ss"));
+            const newString = obj.hash;
+            let num = null;
+            for (let i = newString.length - 1; i >= 0; i--) {
+              if (!isNaN(parseInt(newString[i]))) {
+                num = parseInt(newString[i]);
+                break;
+              }
+            }
+            fd.append("slotid", num);
+            fd.append("overall", JSON.stringify(obj));
+            //  trx 3
+            try {
+              const response = await axios.post(
+                "https://zupeeter.com/Apitrx/insert_three_trx",
+                fd
+              );
+            } catch (e) {
+              console.log(e);
+            }
+          }
+        }, [5000]);
+      } catch (e) {
+        console.log(e);
+      }
+    }
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
@@ -349,6 +390,47 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("fivemintrx", `${min}_${timeToSend}`);
+    if(min === 0 && timeToSend === 9){
+      const datetoAPISend = parseInt(new Date().getTime().toString());
+      const actualtome = soment.tz("Asia/Kolkata");
+      const time = actualtome.add(8, "hours").valueOf();
+      try {
+        setTimeout(async () => {
+          const res = await axios.get(
+            `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
+          );
+          if (res?.data?.data[0]) {
+            const obj = res.data.data[0];
+            const fd = new FormData();
+            fd.append("hash", `**${obj.hash.slice(-4)}`);
+            fd.append("digits", `${obj.hash.slice(-5)}`);
+            fd.append("number", obj.number);
+            fd.append("time", moment(time).format("HH:mm:ss"));
+            const newString = obj.hash;
+            let num = null;
+            for (let i = newString.length - 1; i >= 0; i--) {
+              if (!isNaN(parseInt(newString[i]))) {
+                num = parseInt(newString[i]);
+                break;
+              }
+            }
+            fd.append("slotid", num);
+            fd.append("overall", JSON.stringify(obj));
+            //  trx 3
+            try {
+              const response = await axios.post(
+                "https://zupeeter.com/Apitrx/insert_five_trx",
+                fd
+              );
+            } catch (e) {
+              console.log(e);
+            }
+          }
+        }, [5000]);
+      } catch (e) {
+        console.log(e);
+      }
+    }
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 4; // Reset min to 4 when it reaches 0
@@ -371,7 +453,7 @@ if (trx) {
   const currentSecond = nowIST.seconds();
 
   // Calculate remaining minutes and seconds until 22:28 IST
-  const minutesRemaining = 60 - currentMinute - 1;
+  const minutesRemaining = 30 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
