@@ -248,8 +248,8 @@ const generatedTimeEveryAfterEveryThreeMinTRXAPICall3Sec = () => {
   console.log("3 min function called");
   const job = schedule.scheduleJob("51 */3 * * * *", function () {
     const datetoAPISend = parseInt(new Date().getTime().toString());
-    const actualTime = moment().tz("Asia/Kolkata").add(8, "hours");
-    console.log("51 sec of every 3 min", actualTime.format("HH:mm:ss"));
+    const actualtome = soment.tz("Asia/Kolkata");
+    const time = actualtome.add(8, "hours").valueOf();
 
     try {
       setTimeout(async () => {
@@ -339,10 +339,11 @@ const generatedTimeEveryAfterEveryThreeMinTRXAPICall5Sec = () => {
 
 const generatedTimeEveryAfterEveryThreeMinTRX = () => {
   let min = 2;
-  const job = schedule.scheduleJob("*/3 * * * *", function () {
+  const job = schedule.scheduleJob("* * * * * *", function () {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("threemintrx", `${min}_${timeToSend}`);
+    console.log(`${min}_${timeToSend}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
@@ -352,7 +353,7 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
 
 const generatedTimeEveryAfterEveryFiveMinTRX = () => {
   let min = 4;
-  const job = schedule.scheduleJob("*/5 * * * *", function () {
+  const job = schedule.scheduleJob("* * * * * *", function () {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("fivemintrx", `${min}_${timeToSend}`);
@@ -378,7 +379,7 @@ if (trx) {
   const currentSecond = nowIST.seconds();
 
   // Calculate remaining minutes and seconds until 22:28 IST
-  const minutesRemaining = 15 - currentMinute - 1;
+  const minutesRemaining = 45 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
@@ -391,7 +392,7 @@ if (trx) {
     trx = false;
   }, delay);
 }
-// generatedTimeEveryAfterEveryOneMinTRX();
+// generatedTimeEveryAfterEveryThreeMinTRX();
 
 // const job = schedule.scheduleJob(rule, function () {
 //   if (x) {
