@@ -180,12 +180,12 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome.add(8, "hours").valueOf();
       console.log("51 min for 1 min",moment(time).format("HH:mm:ss"));
-      if (three === 2 && threeminApi) {
+      if (threeminApi) {
         generatedTimeEveryAfterEveryThreeMinTRXAPICall3Sec();
         threeminApi = false;
       }
 
-      if (five === 4 && fiveminApi) {
+      if (fiveminApi) {
         generatedTimeEveryAfterEveryThreeMinTRXAPICall5Sec();
         fiveminApi = false;
       }
@@ -250,7 +250,7 @@ const generatedTimeEveryAfterEveryThreeMinTRXAPICall3Sec = () => {
     const datetoAPISend = parseInt(new Date().getTime().toString());
     const actualtome = soment.tz("Asia/Kolkata");
     const time = actualtome.add(8, "hours").valueOf();
-
+    console.log("3 min job called");
     try {
       setTimeout(async () => {
         const res = await axios.get(
@@ -296,6 +296,7 @@ const generatedTimeEveryAfterEveryThreeMinTRXAPICall5Sec = () => {
     const datetoAPISend = parseInt(new Date().getTime().toString());
     const actualtome = soment.tz("Asia/Kolkata");
     const time = actualtome.add(8, "hours").valueOf();
+    console.log("5 min job called");
     try {
       setTimeout(async () => {
         const res = await axios.get(
@@ -379,7 +380,7 @@ if (trx) {
   const currentSecond = nowIST.seconds();
 
   // Calculate remaining minutes and seconds until 22:28 IST
-  const minutesRemaining = 45 - currentMinute - 1;
+  const minutesRemaining = 15 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
