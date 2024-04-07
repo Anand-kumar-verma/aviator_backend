@@ -174,12 +174,10 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
         ? 60 - currentTime.getSeconds()
         : currentTime.getSeconds();
     io.emit("onemintrx", timeToSend);
-    console.log(timeToSend,moment(currentTime).format("HH:mm:ss"));
     if (timeToSend === 9) {
       const datetoAPISend = parseInt(new Date().getTime().toString());
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome.add(8, "hours").valueOf();
-      console.log("51 min for 1 min",moment(time).format("HH:mm:ss"));
       if (three === 1 && threeminApi) {
         generatedTimeEveryAfterEveryThreeMinTRXAPICall3Sec();
         threeminApi = false;
@@ -203,7 +201,6 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
           five++;
         }
         setTimeout(async () => {
-          console.log("Inside the settimeout");
           const res = await axios.get(
             `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
           );
@@ -227,7 +224,6 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
             fd.append("overall", JSON.stringify(obj));
             //  trx 1
             try {
-              console.log(res?.data?.data[0]);
               const response = await axios.post(
                 "https://zupeeter.com/Apitrx/insert_one_trx",
                 fd
@@ -245,12 +241,10 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
 }
 
 const generatedTimeEveryAfterEveryThreeMinTRXAPICall3Sec = () => {
-  console.log("3 min function called");
   const job = schedule.scheduleJob("51 */3 * * * *", function () {
     const datetoAPISend = parseInt(new Date().getTime().toString());
     const actualtome = soment.tz("Asia/Kolkata");
     const time = actualtome.add(8, "hours").valueOf();
-    console.log("3 min job called");
     try {
       setTimeout(async () => {
         const res = await axios.get(
@@ -291,12 +285,10 @@ const generatedTimeEveryAfterEveryThreeMinTRXAPICall3Sec = () => {
 };
 
 const generatedTimeEveryAfterEveryThreeMinTRXAPICall5Sec = () => {
-  console.log("5 min function called")
   const job = schedule.scheduleJob("51 */5 * * * *", function () {
     const datetoAPISend = parseInt(new Date().getTime().toString());
     const actualtome = soment.tz("Asia/Kolkata");
     const time = actualtome.add(8, "hours").valueOf();
-    console.log("5 min job called");
     try {
       setTimeout(async () => {
         const res = await axios.get(
@@ -344,7 +336,6 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("threemintrx", `${min}_${timeToSend}`);
-    console.log(`${min}_${timeToSend}`);
     if (currentTime === 0) {
       min--;
       if (min < 0) min = 2; // Reset min to 2 when it reaches 0
@@ -380,7 +371,7 @@ if (trx) {
   const currentSecond = nowIST.seconds();
 
   // Calculate remaining minutes and seconds until 22:28 IST
-  const minutesRemaining = 45 - currentMinute - 1;
+  const minutesRemaining = 60 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
@@ -410,7 +401,7 @@ if (x) {
   generateAndSendMessage();
   console.log("Waiting for the next minute to start...");
   const now = new Date();
-  const secondsUntilNextMinute = 60 - now.getSeconds(); 
+  const secondsUntilNextMinute = 40 - now.getSeconds(); 
   setTimeout(() => {
     generatedTimeEveryAfterEveryOneMin();
     generatedTimeEveryAfterEveryThreeMin();
