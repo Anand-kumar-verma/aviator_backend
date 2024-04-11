@@ -362,7 +362,7 @@ if (x) {
   // generateAndSendMessage();
   console.log("Waiting for the next minute to start...");
   const now = new Date();
-  const secondsUntilNextMinute = 40 - now.getSeconds();
+  const secondsUntilNextMinute = 60 - now.getSeconds();
   setTimeout(() => {
     generatedTimeEveryAfterEveryOneMin();
     generatedTimeEveryAfterEveryThreeMin();
