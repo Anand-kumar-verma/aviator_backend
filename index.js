@@ -86,38 +86,9 @@ function generateAndSendMessage() {
   setTimeout(generateAndSendMessage, time * 1000 + 8000);
 }
 
-function generateTimeSunLottery() {
-  let threemin = 2;
-  let five = 4;
-  const rule = new schedule.RecurrenceRule();
-  rule.second = new schedule.Range(0, 59);
-  const job = schedule.scheduleJob(rule, function () {
-    const currentTime = new Date();
-    const timeToSend =
-      currentTime.getSeconds() > 0
-        ? 60 - currentTime.getSeconds()
-        : currentTime.getSeconds();
-
-    io.emit("onemin", timeToSend); // Emit the formatted time
-    io.emit("threemin", `${threemin}_${timeToSend}`);
-    io.emit("fivemin", `${five}_${timeToSend}`);
-
-    if (currentTime === 0) {
-      threemin--;
-      if (threemin < 0) threemin = 2; // Reset min to 2 when it reaches 0
-    }
-    if (currentTime === 0) {
-      five--;
-      if (five < 0) five = 4; // Reset min to 2 when it reaches 0
-    }
-  });
-}
-
 // color prediction game time generated every 1 min
 function generatedTimeEveryAfterEveryOneMin() {
-  const rule = new schedule.RecurrenceRule();
-  rule.second = new schedule.Range(0, 59);
-  const job = schedule.scheduleJob(rule, function () {
+  const job = schedule.scheduleJob("* * * * * *", function () {
     const currentTime = new Date();
     const timeToSend =
       currentTime.getSeconds() > 0
@@ -130,9 +101,8 @@ function generatedTimeEveryAfterEveryOneMin() {
 // color prediction game time generated every 3 min
 const generatedTimeEveryAfterEveryThreeMin = () => {
   let min = 2;
-  const rule = new schedule.RecurrenceRule();
-  rule.second = new schedule.Range(0, 59);
-  const job = schedule.scheduleJob(rule, function () {
+
+  const job = schedule.scheduleJob("* * * * * *", function () {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("threemin", `${min}_${timeToSend}`);
@@ -145,9 +115,8 @@ const generatedTimeEveryAfterEveryThreeMin = () => {
 
 const generatedTimeEveryAfterEveryFiveMin = () => {
   let min = 4;
-  const rule = new schedule.RecurrenceRule();
-  rule.second = new schedule.Range(0, 59);
-  const job = schedule.scheduleJob(rule, function () {
+
+  const job = schedule.scheduleJob("* * * * * *", function () {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("fivemin", `${min}_${timeToSend}`);
@@ -158,8 +127,6 @@ const generatedTimeEveryAfterEveryFiveMin = () => {
   });
 };
 
-let threeminApi = true;
-let fiveminApi = true;
 // TRX
 // color prediction game time generated every 1 min
 function generatedTimeEveryAfterEveryOneMinTRX() {
@@ -240,94 +207,6 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
   });
 }
 
-const generatedTimeEveryAfterEveryThreeMinTRXAPICall3Sec = () => {
-  const job = schedule.scheduleJob("51 */3 * * * *", function () {
-    const datetoAPISend = parseInt(new Date().getTime().toString());
-    const actualtome = soment.tz("Asia/Kolkata");
-    const time = actualtome.add(8, "hours").valueOf();
-    try {
-      setTimeout(async () => {
-        const res = await axios.get(
-          `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
-        );
-        if (res?.data?.data[0]) {
-          const obj = res.data.data[0];
-          const fd = new FormData();
-          fd.append("hash", `**${obj.hash.slice(-4)}`);
-          fd.append("digits", `${obj.hash.slice(-5)}`);
-          fd.append("number", obj.number);
-          fd.append("time", moment(time).format("HH:mm:ss"));
-          const newString = obj.hash;
-          let num = null;
-          for (let i = newString.length - 1; i >= 0; i--) {
-            if (!isNaN(parseInt(newString[i]))) {
-              num = parseInt(newString[i]);
-              break;
-            }
-          }
-          fd.append("slotid", num);
-          fd.append("overall", JSON.stringify(obj));
-          //  trx 3
-          try {
-            const response = await axios.post(
-              "https://zupeeter.com/Apitrx/insert_three_trx",
-              fd
-            );
-          } catch (e) {
-            console.log(e);
-          }
-        }
-      }, [5000]);
-    } catch (e) {
-      console.log(e);
-    }
-  });
-};
-
-const generatedTimeEveryAfterEveryThreeMinTRXAPICall5Sec = () => {
-  const job = schedule.scheduleJob("51 */5 * * * *", function () {
-    const datetoAPISend = parseInt(new Date().getTime().toString());
-    const actualtome = soment.tz("Asia/Kolkata");
-    const time = actualtome.add(8, "hours").valueOf();
-    try {
-      setTimeout(async () => {
-        const res = await axios.get(
-          `https://apilist.tronscanapi.com/api/block?sort=-balance&start=0&limit=20&producer=&number=&start_timestamp=${datetoAPISend}&end_timestamp=${datetoAPISend}`
-        );
-        if (res?.data?.data[0]) {
-          const obj = res.data.data[0];
-          const fd = new FormData();
-          fd.append("hash", `**${obj.hash.slice(-4)}`);
-          fd.append("digits", `${obj.hash.slice(-5)}`);
-          fd.append("number", obj.number);
-          fd.append("time", moment(time).format("HH:mm:ss"));
-          const newString = obj.hash;
-          let num = null;
-          for (let i = newString.length - 1; i >= 0; i--) {
-            if (!isNaN(parseInt(newString[i]))) {
-              num = parseInt(newString[i]);
-              break;
-            }
-          }
-          fd.append("slotid", num);
-          fd.append("overall", JSON.stringify(obj));
-          //  trx 3
-          try {
-            const response = await axios.post(
-              "https://zupeeter.com/Apitrx/insert_five_trx",
-              fd
-            );
-          } catch (e) {
-            console.log(e);
-          }
-        }
-      }, [5000]);
-    } catch (e) {
-      console.log(e);
-    }
-  });
-};
-
 // generatedTimeEveryAfterEveryOneMinTRX();
 
 const generatedTimeEveryAfterEveryThreeMinTRX = () => {
@@ -336,7 +215,7 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("threemintrx", `${min}_${timeToSend}`);
-    if(min === 0 && timeToSend === 9){
+    if (min === 0 && timeToSend === 9) {
       const datetoAPISend = parseInt(new Date().getTime().toString());
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome.add(8, "hours").valueOf();
@@ -390,7 +269,7 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("fivemintrx", `${min}_${timeToSend}`);
-    if(min === 0 && timeToSend === 9){
+    if (min === 0 && timeToSend === 9) {
       const datetoAPISend = parseInt(new Date().getTime().toString());
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome.add(8, "hours").valueOf();
@@ -453,7 +332,7 @@ if (trx) {
   const currentSecond = nowIST.seconds();
 
   // Calculate remaining minutes and seconds until 22:28 IST
-  const minutesRemaining = 30 - currentMinute - 1;
+  const minutesRemaining = 45 - currentMinute - 1;
   const secondsRemaining = 60 - currentSecond;
 
   const delay = (minutesRemaining * 60 + secondsRemaining) * 1000;
@@ -480,10 +359,10 @@ if (trx) {
 // });
 
 if (x) {
-  generateAndSendMessage();
+  // generateAndSendMessage();
   console.log("Waiting for the next minute to start...");
   const now = new Date();
-  const secondsUntilNextMinute = 40 - now.getSeconds(); 
+  const secondsUntilNextMinute = 40 - now.getSeconds();
   setTimeout(() => {
     generatedTimeEveryAfterEveryOneMin();
     generatedTimeEveryAfterEveryThreeMin();
