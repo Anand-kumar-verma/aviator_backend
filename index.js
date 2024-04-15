@@ -141,7 +141,7 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
         ? 60 - currentTime.getSeconds()
         : currentTime.getSeconds();
     io.emit("onemintrx", timeToSend);
-    if (timeToSend === 9) {
+    if (timeToSend === 6) {
       const datetoAPISend = parseInt(new Date().getTime().toString());
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome.add(8, "hours").valueOf();
@@ -199,7 +199,7 @@ function generatedTimeEveryAfterEveryOneMinTRX() {
               console.log(e);
             }
           }
-        }, [5000]);
+        }, [4000]);
       } catch (e) {
         console.log(e);
       }
@@ -215,7 +215,7 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("threemintrx", `${min}_${timeToSend}`);
-    if (min === 0 && timeToSend === 9) {
+    if (min === 0 && timeToSend === 6) {
       const datetoAPISend = parseInt(new Date().getTime().toString());
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome.add(8, "hours").valueOf();
@@ -251,7 +251,7 @@ const generatedTimeEveryAfterEveryThreeMinTRX = () => {
               console.log(e);
             }
           }
-        }, [5000]);
+        }, [4000]);
       } catch (e) {
         console.log(e);
       }
@@ -269,7 +269,7 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
     const currentTime = new Date().getSeconds(); // Get the current time
     const timeToSend = currentTime > 0 ? 60 - currentTime : currentTime;
     io.emit("fivemintrx", `${min}_${timeToSend}`);
-    if (min === 0 && timeToSend === 9) {
+    if (min === 0 && timeToSend === 6) {
       const datetoAPISend = parseInt(new Date().getTime().toString());
       const actualtome = soment.tz("Asia/Kolkata");
       const time = actualtome.add(8, "hours").valueOf();
@@ -305,7 +305,7 @@ const generatedTimeEveryAfterEveryFiveMinTRX = () => {
               console.log(e);
             }
           }
-        }, [5000]);
+        }, [4000]);
       } catch (e) {
         console.log(e);
       }
